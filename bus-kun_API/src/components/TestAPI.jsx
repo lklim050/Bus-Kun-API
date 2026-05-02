@@ -169,15 +169,60 @@ const TestAPI = () => {
       .filter((s) => s.distanceKm <= radiusKm)
       .sort((a, b) => a.distanceKm - b.distanceKm);
   }
+  //-------------------GET/MAP NEARBY BUS STOP INFORMATION-------------------------------
+  const nearbyBusStopArray = findNearbyStops(
+    locationQuery.data?.latitude,
+    locationQuery.data?.longitude,
+  ).map((stop) => ({ ...stop }));
 
-  //-----------------------------RETURN--------------------------------------------
+  const getNearbyBusStopData = async () => {
+    const nearbyStopsWithServices = [];
+
+    for (let i = 0; i < nearbyBusStopArray.length; i++) {
+      const res = await fetch(url + nearbyBusStopArray[i].code, {
+        headers: { AccountKey: import.meta.env.VITE_ACCKEY },
+      });
+      if (!res.ok) {
+        throw new Error("cannot fetch bus data, please check url or location");
+      }
+
+      const data = await res.json();
+      const services = data?.Services ?? [];
+
+      nearbyStopsWithServices.push({
+        ...nearbyBusStopArray[i],
+        services,
+      });
+    }
+
+    return nearbyStopsWithServices;
+  };
+
+  const nearbyBusStopQuery = useQuery({
+    queryKey: ["nearbyBusStop"],
+    queryFn: getNearbyBusStopData,
+    staleTime: 60_000,
+    enabled: false, // true to fetch url
+  });
+
+  // return an empty array if return data is undefined to prevent runtime clash
+  const nearbyBusData = nearbyBusStopQuery.data ?? [];
+
+  //--------------------------------RETURN--------------------------------------------
   return (
     <div>
+      {` -------------------------return SGT------------------------------------------- `}
+      <br />
       {nowSGTime()}
       <br />
-      <button onClick={() => busStopQuery.refetch()}>Fetch Bus Info</button>
+
+      {`------------ get user location with navigator.geolocation------------------------ `}
       <br />
-      {`This is Your Location`}
+      <button onClick={() => locationQuery.refetch()}>
+        Fetch user Location
+      </button>
+      <br />
+      {`This is Your Location:`}
       <br />
       {locationQuery.isSuccess && locationQuery.data ? (
         <p>{`Lat: ${locationQuery.data.latitude}, Long: ${locationQuery.data.longitude}`}</p>
@@ -188,7 +233,10 @@ const TestAPI = () => {
         </p>
       )}
       <br />
-      {`Here are the bus stop near you`}
+      {`----------- get nearby bus based on user location or fallback--------------- `}
+      <br />
+
+      {`Here are the bus stop near you:`}
       <br />
       {allBusStopQuery.isLoading && <p>Loading bus stops...</p>}
       {allBusStopQuery.isError && (
@@ -213,7 +261,10 @@ const TestAPI = () => {
         <p>Note: Using fallback location (location permission denied)</p>
       )}
       <br />
-
+      {`----------- get bus stop information with GET from ltaodataservice------------- `}
+      <br />
+      <button onClick={() => busStopQuery.refetch()}>Fetch Bus Info</button>
+      <br />
       {busStopQuery.isLoading && <h3>Loading...</h3>}
       {busStopQuery.isError && <h3>{busStopQuery.error?.message}</h3>}
       <br />
@@ -238,6 +289,53 @@ const TestAPI = () => {
         ) : (
           <p>No data available</p>
         ))}
+      {`----------- get bus stop information with GET from ltaodataservice------------- `}
+      <br />
+      <button onClick={() => nearbyBusStopQuery.refetch()}>
+        Fetch Nearby Bus Info
+      </button>
+      <br />
+      {nearbyBusStopQuery.isLoading && <h3>Loading...</h3>}
+      {nearbyBusStopQuery.isError && (
+        <h3>{nearbyBusStopQuery.error?.message}</h3>
+      )}
+      <br />
+      {(nearbyBusStopQuery.isSuccess || nearbyBusStopQuery.data) &&
+        (nearbyBusData.length > 0 ? (
+          <div>
+            {nearbyBusData.map((stop) => (
+              <div key={stop.code}>
+                <h4>
+                  Stop {stop.code} - {stop.description1} (
+                  {stop.distanceKm.toFixed(2)} km)
+                </h4>
+                {stop.services.length > 0 ? (
+                  <ul>
+                    {stop.services.map((item, index) => {
+                      const nextBuses = [
+                        item.NextBus,
+                        item.NextBus2,
+                        item.NextBus3,
+                      ].filter(Boolean);
+
+                      return (
+                        <li key={`${stop.code}-${item.ServiceNo}-${index}`}>
+                          Service {item.ServiceNo} - Next Bus:{" "}
+                          {formatNextBusTime(nextBuses)}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <p>No data available for this stop</p>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>No data available</p>
+        ))}
+      {/* {JSON.stringify(nearbyBusStopArray)} */}
     </div>
   );
 };
