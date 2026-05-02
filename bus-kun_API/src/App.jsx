@@ -1,13 +1,24 @@
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Routes, Route } from "react-router";
 import TestAPI from "./components/TestAPI";
+import DashBoard from "./pages/DashBoard";
+import Nearby from "./pages/Nearby";
+import Search from "./pages/Search";
+import Navbar from "./components/NavBar";
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TestAPI />
+      <Routes>
+        {/* <TestAPI /> */}
+        <Route path="/" element={<DashBoard />} />
+        <Route path="/nearby" element={<Nearby />} />
+        <Route path="/search" element={<Search />} />
+      </Routes>
+      <Navbar />
     </QueryClientProvider>
   );
 }
