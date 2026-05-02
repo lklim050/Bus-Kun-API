@@ -128,3 +128,39 @@ dist/
 
 # Ignore python cache
 **/__pycache__/
+8-create-langauge-registry-app-lab/text.txt
+8-create-langauge-registry-app-lab/package-lock.json
+8-create-langauge-registry-app-lab/lincoln/vite.config.js
+8-create-langauge-registry-app-lab/lincoln/src/main.jsx
+8-create-langauge-registry-app-lab/lincoln/src/index.css
+8-create-langauge-registry-app-lab/lincoln/src/ErrorComponent.jsx
+8-create-langauge-registry-app-lab/lincoln/src/components/UpdateModal.jsx
+8-create-langauge-registry-app-lab/lincoln/src/components/ShowModal.jsx
+8-create-langauge-registry-app-lab/lincoln/src/components/Modal.module.css
+8-create-langauge-registry-app-lab/lincoln/src/components/Display.jsx
+8-create-langauge-registry-app-lab/lincoln/src/components/Card.jsx
+8-create-langauge-registry-app-lab/lincoln/src/App.jsx
+8-create-langauge-registry-app-lab/lincoln/public/ga.ico
+8-create-langauge-registry-app-lab/lincoln/package.json
+8-create-langauge-registry-app-lab/lincoln/package-lock.json
+8-create-langauge-registry-app-lab/lincoln/index.html
+8-create-langauge-registry-app-lab/EMPTY.md
+8-create-langauge-registry-app-lab/checklist.txt
+project-prototype/index.html
+project-prototype/package-lock.json
+project-prototype/package.json
+project-prototype/public/ga.ico
+project-prototype/src/App.jsx
+project-prototype/src/components/Navbar.css
+project-prototype/src/components/Navbar.jsx
+project-prototype/src/components/TestAPI copy.jsx
+project-prototype/src/components/TestAPI.jsx
+project-prototype/src/data/nearbyMockData.js
+project-prototype/src/ErrorComponent.jsx
+project-prototype/src/index.css
+project-prototype/src/main.jsx
+project-prototype/src/pages/Dashboard.jsx
+project-prototype/src/pages/Nearby.jsx
+project-prototype/src/pages/SearchBusInfo.jsx
+project-prototype/vite.config.js
+text.txt
