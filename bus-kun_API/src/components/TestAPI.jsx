@@ -116,8 +116,59 @@ const TestAPI = () => {
   const locationQuery = useQuery({
     queryKey: ["userLocation"],
     queryFn: getUserLocation,
+    enabled: false, // false to stop query
     staleTime: 60_000, // refresh every 60s
   });
+
+  //----------------------------HAVERSINE DISTANCE CALCULATOR-----------------------------------
+  const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Earth's radius in km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // distance in km
+  };
+
+  //----------------------------CHECK NEARBY BUS-----------------------------------
+
+  const getAllBusStop = async () => {
+    const res = await fetch("/stops.json");
+    if (!res.ok) {
+      throw new Error("cannot find local data - stops.json");
+    }
+    return res.json();
+  };
+
+  const allBusStopQuery = useQuery({
+    queryKey: ["allBusStop"],
+    queryFn: getAllBusStop,
+  });
+
+  function findNearbyStops(lat = 1.3, lon = 103.84, radiusKm = 0.5) {
+    if (!lat || !lon || !allBusStopQuery.data) return [];
+    const stopsArray = Object.entries(allBusStopQuery.data).map(
+      ([code, data]) => ({
+        code,
+        longitude: data[0],
+        latitude: data[1],
+        description1: data[2],
+        description2: data[3],
+      }),
+    );
+    return stopsArray
+      .map((stop) => ({
+        ...stop,
+        distanceKm: haversineDistance(lat, lon, stop.latitude, stop.longitude),
+      }))
+      .filter((s) => s.distanceKm <= radiusKm)
+      .sort((a, b) => a.distanceKm - b.distanceKm);
+  }
 
   //-----------------------------RETURN--------------------------------------------
   return (
@@ -129,9 +180,38 @@ const TestAPI = () => {
       {locationQuery.isSuccess && locationQuery.data ? (
         <p>{`Lat: ${locationQuery.data.latitude}, Long: ${locationQuery.data.longitude}`}</p>
       ) : (
-        <p>no location data fetch</p>
+        <p>
+          location not ON, using fallback location Plaza Singapura (lat:1.3,
+          lon=103.84)
+        </p>
       )}
       <br />
+      {`Here are the bus stop near you`}
+      <br />
+      {allBusStopQuery.isLoading && <p>Loading bus stops...</p>}
+      {allBusStopQuery.isError && (
+        <p>Error loading bus stops: {allBusStopQuery.error?.message}</p>
+      )}
+      {allBusStopQuery.isSuccess && allBusStopQuery.data ? (
+        <ul>
+          {findNearbyStops(
+            locationQuery.data?.latitude,
+            locationQuery.data?.longitude,
+          ).map((stop) => (
+            <li key={stop.code}>
+              {stop.code} - {stop.description1} ({stop.distanceKm.toFixed(2)}{" "}
+              km)
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>Waiting for bus stop data...</p>
+      )}
+      {locationQuery.isError && (
+        <p>Note: Using fallback location (location permission denied)</p>
+      )}
+      <br />
+
       {busStopQuery.isLoading && <h3>Loading...</h3>}
       {busStopQuery.isError && <h3>{busStopQuery.error?.message}</h3>}
       <br />
