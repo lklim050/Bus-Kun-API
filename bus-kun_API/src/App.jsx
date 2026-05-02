@@ -1,10 +1,14 @@
 import React from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import TestAPI from "./components/TestAPI";
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <div>
-      <h2>GA SEB</h2>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <TestAPI />
+    </QueryClientProvider>
   );
 }
 
