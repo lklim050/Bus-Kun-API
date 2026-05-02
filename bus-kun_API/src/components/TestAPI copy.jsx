@@ -1,5 +1,14 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
+import {
+  findNearbyStops as getNearbyStops,
+  formatNextBusTime,
+  getAllBusStop,
+  getBusStopData,
+  getNearbyBusStopData,
+  getUserLocation,
+  nowSGTime,
+} from "../utils/busApi";
 
 // const urltest = "/ltaodataservice/v3/BusArrival?BusStopCode=83139&ServiceNo=15";
 
@@ -8,80 +17,10 @@ const TestAPI = () => {
   const url = "/ltaodataservice/v3/BusArrival?BusStopCode=";
   const selectBusStopNo = "64029";
 
-  //------------Format NextBus estimatedArrival-----------------------------
-
-  const nowSGTime = () => {
-    const now = new Date();
-    const datePart = now.toLocaleDateString("sv-SE", {
-      timeZone: "Asia/Singapore",
-    });
-    const timePart = now.toLocaleTimeString("en-GB", {
-      timeZone: "Asia/Singapore",
-    }); // 24h format
-
-    return `${datePart}T${timePart}+08:00`;
-  };
-
-  const formatNextBus = (nextBus) => {
-    if (!nextBus) {
-      return "No next bus data";
-    }
-
-    // ensure result is array, if not, make it an Array
-    const buses = Array.isArray(nextBus) ? nextBus : [nextBus];
-
-    return buses
-      .map((bus, index) => {
-        const estimatedArrival = bus?.EstimatedArrival ?? "N/A";
-        const load = bus?.Load ?? "N/A";
-
-        return `Bus ${index + 1}: ${estimatedArrival} (${load})`;
-      })
-      .join(" | ");
-  };
-
-  const formatNextBusTime = (nextBus) => {
-    // 2026-05-02T17:53:06+08:00
-    if (!nextBus) {
-      return "No next bus data";
-    }
-
-    // ensure result is array, if not, make it an Array
-    const buses = Array.isArray(nextBus) ? nextBus : [nextBus];
-
-    return buses
-      .map((bus, index) => {
-        const estimatedArrival = bus?.EstimatedArrival ?? "N/A";
-        const arrivalMs = new Date(estimatedArrival).getTime();
-        if (Number.isNaN(arrivalMs)) {
-          // there is no next bus, return N/A
-          return `Bus ${index + 1}: N/A`;
-        }
-        const differenceInMinutes = Math.max(
-          0,
-          Math.round((arrivalMs - Date.now()) / 60000),
-        );
-        if (differenceInMinutes === 0) {
-          return `Bus ${index + 1}: ARR`;
-        }
-        return `Bus ${index + 1}: ${differenceInMinutes} min`;
-      })
-      .join(" | ");
-  };
-
   //-------------------GET BUS DATA--------------------------------------------
-  const getBusStopData = async () => {
-    const res = await fetch(url + selectBusStopNo, {
-      headers: { AccountKey: import.meta.env.VITE_ACCKEY },
-    });
-    if (!res.ok) {
-      throw new Error("cannot fetch, check url or connection");
-    }
-    return await res.json();
-  };
   const busStopQuery = useQuery({
     queryKey: ["busstops"],
-    queryFn: getBusStopData,
+    queryFn: () => getBusStopData(selectBusStopNo, import.meta.env.VITE_ACCKEY),
     enabled: false, // false to stop query
     staleTime: 60_000, // auto refresh for 60s
     //   refetchOnWindowFocus: false,  // don't refetch when tab is focused
@@ -91,27 +30,6 @@ const TestAPI = () => {
   const busData = busStopQuery.data?.Services ?? busStopQuery.data ?? [];
 
   //----------------------------GET LOCATION----------------------------------------
-
-  const getUserLocation = async () => {
-    return new Promise((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error("Geolocation is not supported by your browser"));
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          resolve({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            accuracy: position.coords.accuracy,
-            timestamp: position.timestamp,
-          });
-        },
-        (error) => reject(error),
-        { enableHighAccuracy: true, timeout: 10000 },
-      );
-    });
-  };
 
   const locationQuery = useQuery({
     queryKey: ["userLocation"],
@@ -137,70 +55,25 @@ const TestAPI = () => {
 
   //----------------------------CHECK NEARBY BUS-----------------------------------
 
-  const getAllBusStop = async () => {
-    const res = await fetch("/stops.json");
-    if (!res.ok) {
-      throw new Error("cannot find local data - stops.json");
-    }
-    return res.json();
-  };
-
   const allBusStopQuery = useQuery({
     queryKey: ["allBusStop"],
     queryFn: getAllBusStop,
   });
 
   function findNearbyStops(lat = 1.3, lon = 103.84, radiusKm = 0.5) {
-    if (!lat || !lon || !allBusStopQuery.data) return [];
-    const stopsArray = Object.entries(allBusStopQuery.data).map(
-      ([code, data]) => ({
-        code,
-        longitude: data[0],
-        latitude: data[1],
-        description1: data[2],
-        description2: data[3],
-      }),
-    );
-    return stopsArray
-      .map((stop) => ({
-        ...stop,
-        distanceKm: haversineDistance(lat, lon, stop.latitude, stop.longitude),
-      }))
-      .filter((s) => s.distanceKm <= radiusKm)
-      .sort((a, b) => a.distanceKm - b.distanceKm);
+    return getNearbyStops(allBusStopQuery.data, lat, lon, radiusKm);
   }
+
   //-------------------GET/MAP NEARBY BUS STOP INFORMATION-------------------------------
   const nearbyBusStopArray = findNearbyStops(
     locationQuery.data?.latitude,
     locationQuery.data?.longitude,
   ).map((stop) => ({ ...stop }));
 
-  const getNearbyBusStopData = async () => {
-    const nearbyStopsWithServices = [];
-
-    for (let i = 0; i < nearbyBusStopArray.length; i++) {
-      const res = await fetch(url + nearbyBusStopArray[i].code, {
-        headers: { AccountKey: import.meta.env.VITE_ACCKEY },
-      });
-      if (!res.ok) {
-        throw new Error("cannot fetch bus data, please check url or location");
-      }
-
-      const data = await res.json();
-      const services = data?.Services ?? [];
-
-      nearbyStopsWithServices.push({
-        ...nearbyBusStopArray[i],
-        services,
-      });
-    }
-
-    return nearbyStopsWithServices;
-  };
-
   const nearbyBusStopQuery = useQuery({
     queryKey: ["nearbyBusStop"],
-    queryFn: getNearbyBusStopData,
+    queryFn: () =>
+      getNearbyBusStopData(nearbyBusStopArray, import.meta.env.VITE_ACCKEY),
     staleTime: 60_000,
     enabled: false, // true to fetch url
   });

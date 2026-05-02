@@ -28,6 +28,15 @@ const Navbar = () => {
         <span className="nav-icon">🔎</span>
         <span className="nav-label">Search</span>
       </Link>
+      {/*---------------------TO DELETE BEFORE SUBMISSION-----------------------------------*/}
+      <Link
+        to="/test"
+        className={`nav-link ${location.pathname === "/test" ? "active" : ""}`}
+      >
+        <span className="nav-icon">📋</span>
+        <span className="nav-label">Test</span>
+      </Link>
+      {/*---------------------TO DELETE BEFORE SUBMISSION-----------------------------------*/}
     </nav>
   );
 };
