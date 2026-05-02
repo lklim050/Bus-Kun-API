@@ -175,6 +175,8 @@ const TestAPI = () => {
     <div>
       {nowSGTime()}
       <br />
+      <button onClick={() => busStopQuery.refetch()}>Fetch Bus Info</button>
+      <br />
       {`This is Your Location`}
       <br />
       {locationQuery.isSuccess && locationQuery.data ? (
@@ -215,7 +217,7 @@ const TestAPI = () => {
       {busStopQuery.isLoading && <h3>Loading...</h3>}
       {busStopQuery.isError && <h3>{busStopQuery.error?.message}</h3>}
       <br />
-      {busStopQuery.isSuccess &&
+      {(busStopQuery.isSuccess || busStopQuery.data) &&
         (busData.length > 0 ? (
           <ul>
             {busData.map((item, index) => {
