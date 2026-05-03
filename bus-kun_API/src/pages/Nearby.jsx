@@ -7,6 +7,7 @@ import {
   getNearbyBusStopData,
   getUserLocation,
   nowSGTime,
+  getStoredBusStop,
 } from "../utils/busApi";
 import BusCard from "../components/BusCard";
 import { useQuery } from "@tanstack/react-query";
@@ -62,6 +63,29 @@ const Nearby = () => {
   // return an empty array if return data is undefined to prevent runtime clash
   const nearbyBusData = nearbyBusStopQuery.data ?? [];
 
+  // fetch stored favourites so we can mark nearby stops that are already saved
+  const storedBusStopQuery = useQuery({
+    queryKey: ["storedBusStop"],
+    queryFn: getStoredBusStop,
+    staleTime: 600_000,
+    enabled: true,
+  });
+
+  const storedBusStopData =
+    storedBusStopQuery.data?.records?.map((record) => ({
+      id: record.id,
+      busCode: record.fields?.BusCodeStored || "",
+      type: record.fields?.Type || "unknown",
+    })) ?? [];
+
+  // attach stored id to nearby stops when codes match so BusCard can render correct toggle
+  const nearbyBusDataEx = nearbyBusData.map((stop) => {
+    const saved = storedBusStopData.find(
+      (s) => s.busCode === String(stop.code),
+    );
+    return saved ? { ...stop, id: saved.id, type: saved.type } : stop;
+  });
+
   //--------------------------------RETURN--------------------------------------------
   return (
     <div>
@@ -91,9 +115,9 @@ const Nearby = () => {
       )}
       <br />
       {(nearbyBusStopQuery.isSuccess || nearbyBusStopQuery.data) &&
-        (nearbyBusData.length > 0 ? (
+        (nearbyBusDataEx.length > 0 ? (
           <div>
-            {nearbyBusData.map((stop) => (
+            {nearbyBusDataEx.map((stop) => (
               <BusCard key={stop.code} stop={stop} />
             ))}
           </div>

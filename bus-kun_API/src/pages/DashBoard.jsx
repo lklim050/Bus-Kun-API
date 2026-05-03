@@ -37,18 +37,18 @@ const DashBoard = () => {
   });
 
   // Wrap single query result into proper stop object with details from stops.json
-  const stopDetails = getBusStopDetails(input, allBusStopQuery.data);
-  const stopData = busStopQuery.data
+  const busStopDetails = getBusStopDetails(input, allBusStopQuery.data);
+  const busStopData = busStopQuery.data
     ? {
         code: busStopQuery.data.BusStopCode || input,
         description1:
-          stopDetails?.description1 ||
+          busStopDetails?.description1 ||
           busStopQuery.data.BusStopName ||
           "Unknown Stop",
-        description2: stopDetails?.description2 || "",
-        latitude: stopDetails?.latitude,
-        longitude: stopDetails?.longitude,
-        distanceKm: stopDetails?.distanceKm ?? 0,
+        description2: busStopDetails?.description2 || "",
+        latitude: busStopDetails?.latitude,
+        longitude: busStopDetails?.longitude,
+        distanceKm: busStopDetails?.distanceKm ?? 0,
         services: busStopQuery.data.Services || [],
       }
     : null;
@@ -86,6 +86,18 @@ const DashBoard = () => {
 
   const storedStopData = storedStopQuery.data ?? [];
 
+  // enrich single search stop with stored id/type when available so BusCard shows correct saved state
+  const busStopDataEx = busStopData
+    ? (() => {
+        const found = storedBusStopData.find(
+          (s) => String(s.busCode) === String(busStopData.code),
+        );
+        return found
+          ? { ...busStopData, id: found.id, type: found.type }
+          : busStopData;
+      })()
+    : null;
+
   //------------------------------------RETURN------------------------------------------------
 
   return (
@@ -110,7 +122,7 @@ const DashBoard = () => {
       <br />
       {` ================================================================= `}
       <br />
-      {JSON.stringify(stopData)}
+      {/* {JSON.stringify(busStopData)} */}
       <br />
       {` ================================================================= `}
       <br />
@@ -119,17 +131,17 @@ const DashBoard = () => {
       {busStopQuery.isError && <h3>{busStopQuery.error?.message}</h3>}
       <br />
       {(busStopQuery.isSuccess || busStopQuery.data) &&
-        (stopData && stopData.services.length > 0 ? (
+        (busStopDataEx && busStopDataEx.services.length > 0 ? (
           <div>
             <h2>Search Result</h2>
-            <BusCard key={stopData.code} stop={stopData} />
+            <BusCard key={busStopDataEx.code} stop={busStopDataEx} />
           </div>
         ) : (
           <p>No bus services available for this stop</p>
         ))}
 
       {/* Stored Bus Stops from Airtable - mapping section */}
-      {storedStopQuery.isLoading && <h3>Loading stored stops...</h3>}
+      {storedStopQuery.isLoading && <h3>Loading your favourites stops...</h3>}
       {storedStopQuery.isError && <h3>{storedStopQuery.error?.message}</h3>}
       {storedStopData.length > 0 && (
         <div>
