@@ -1,4 +1,4 @@
-.bus-card {
+.busCard {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 16px;
@@ -13,25 +13,26 @@
   box-sizing: border-box;
 }
 
-.bus-card-header {
+.busCardHeader {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 0;
   padding-right: 16px;
   border-right: 1px solid #e0e0e0;
-  min-width: 0;
+  min-width: 60px;
+  max-width: 80px;
   flex: 0 0 32%;
 }
 
-.bus-stop-title {
+.busStopTitle {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
   color: #1a1a1a;
 }
 
-.bus-stop-description {
+.busStopDescription {
   margin: 0;
   font-size: 14px;
   color: #555;
@@ -40,31 +41,32 @@
   word-break: break-word;
 }
 
-.bus-stop-distance {
+.busStopDistance {
   font-size: 13px;
   color: #888;
   font-weight: 500;
 }
 
-.bus-services-container {
+.busServicesContainer {
   margin-top: 0;
   flex: 1 1 0;
   min-width: 0;
 }
 
-.bus-services-list {
+.busServicesList {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 8px;
-  max-width: 100px;
+  max-width: 840px;
 }
 
-.bus-service-item {
+.busServiceItem {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: flex-start;
   gap: 8px;
   padding: 10px 12px;
@@ -72,23 +74,24 @@
   border-left: 4px solid #007bff;
   border-radius: 4px;
   font-size: 14px;
+  max-width: 140px;
 }
 
-.service-number {
+.serviceNumber {
   font-weight: 600;
   color: #333;
 }
 
-.service-arrival-stack {
+.serviceArrivalStack {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
   width: 100%;
-  min-width: 0;
+  min-width: 100px;
 }
 
-.service-arrival-line {
+.serviceArrivalLine {
   color: #28a745;
   font-weight: 500;
   text-align: left;
@@ -96,7 +99,7 @@
   word-break: break-word;
 }
 
-.no-services {
+.noServices {
   padding: 12px;
   background-color: #fff;
   border-radius: 4px;
@@ -108,7 +111,7 @@
 
 /* Responsive adjustments */
 /* @media (max-width: 480px) {
-  .bus-card {
+  .busCard {
     flex-direction: column;
     padding: 12px;
     margin-bottom: 12px;
@@ -116,7 +119,7 @@
     align-items: stretch;
   }
 
-  .bus-card-header {
+  .busCardHeader {
     flex: 1 1 auto;
     width: 100%;
     padding-right: 0;
@@ -125,16 +128,16 @@
     border-bottom: 1px solid #e0e0e0;
   }
 
-  .bus-services-container {
+  .busServicesContainer {
     width: 100%;
   }
 
-  .bus-service-item {
+  .busServiceItem {
     width: 100%;
     padding: 10px;
   }
 
-  .service-arrival-stack {
+  .serviceArrivalStack {
     width: 100%;
   }
 } */

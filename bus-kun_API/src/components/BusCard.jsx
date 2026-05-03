@@ -1,5 +1,5 @@
 import React from "react";
-import "./BusCard.css";
+import styles from "./BusCard.module.css";
 
 const BusCard = ({ stop }) => {
   if (!stop) return null;
@@ -24,19 +24,23 @@ const BusCard = ({ stop }) => {
     return `${differenceInMinutes} min`;
   };
 
+  const distanceText = (() => {
+    const d = Number(stop.distanceKm);
+    // this check if distance is passed properly
+    return Number.isFinite(d) ? `${d.toFixed(2)} km away` : "Distance unknown";
+  })();
+
   return (
-    <div className="bus-card">
-      <div className="bus-card-header">
-        <h4 className="bus-stop-title">{stop.code}</h4>
-        <p className="bus-stop-description">{stop.description1}</p>
-        <span className="bus-stop-distance">
-          {stop.distanceKm.toFixed(2)} km away
-        </span>
+    <div className={styles.busCard}>
+      <div className={styles.busCardHeader}>
+        <h4 className={styles.busStopTitle}>{stop.code}</h4>
+        <p className={styles.busStopDescription}>{stop.description1}</p>
+        <span className={styles.busStopDistance}>{distanceText}</span>
       </div>
 
       {stop.services && stop.services.length > 0 ? (
-        <div className="bus-services-container">
-          <ul className="bus-services-list">
+        <div className={styles.busServicesContainer}>
+          <ul className={styles.busServicesList}>
             {stop.services.map((item, index) => {
               const nextBuses = [
                 item.NextBus,
@@ -47,21 +51,21 @@ const BusCard = ({ stop }) => {
               return (
                 <li
                   key={`${stop.code}-${item.ServiceNo}-${index}`}
-                  className="bus-service-item"
+                  className={styles.busServiceItem}
                 >
-                  <span className="service-number">{item.ServiceNo}</span>
-                  <div className="service-arrival-stack">
+                  <span className={styles.serviceNumber}>{item.ServiceNo}</span>
+                  <div className={styles.serviceArrivalStack}>
                     {nextBuses.length > 0 ? (
                       nextBuses.map((bus, busIndex) => (
                         <span
                           key={`${stop.code}-${item.ServiceNo}-${busIndex}`}
-                          className="service-arrival-line"
+                          className={styles.serviceArrivalLine}
                         >
-                          Bus {busIndex + 1}: {formatArrival(bus)}
+                          {formatArrival(bus)} ({bus.Load})
                         </span>
                       ))
                     ) : (
-                      <span className="service-arrival-line">
+                      <span className={styles.serviceArrivalLine}>
                         No next bus data
                       </span>
                     )}
@@ -72,7 +76,9 @@ const BusCard = ({ stop }) => {
           </ul>
         </div>
       ) : (
-        <p className="no-services">No bus services available for this stop</p>
+        <p className={styles.noServices}>
+          No bus services available for this stop
+        </p>
       )}
     </div>
   );

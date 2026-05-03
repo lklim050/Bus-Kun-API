@@ -84,6 +84,7 @@ const Nearby = () => {
         Fetch Nearby Bus Info
       </button>
       <br />
+      {JSON.stringify(nearbyBusStopQuery.data)}
       {nearbyBusStopQuery.isLoading && <h3>Loading...</h3>}
       {nearbyBusStopQuery.isError && (
         <h3>{nearbyBusStopQuery.error?.message}</h3>

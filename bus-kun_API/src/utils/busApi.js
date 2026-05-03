@@ -123,6 +123,30 @@ export const getBusStopData = async (busStopCode, accountKey) => {
   return res.json();
 };
 
+export const getBusStopDetails = (
+  busStopCode,
+  allStopsData,
+  userLat = 1.3,
+  userLon = 103.84,
+) => {
+  if (!allStopsData || !busStopCode) return null;
+
+  const stopData = allStopsData[busStopCode];
+  if (!stopData) return null;
+
+  const [longitude, latitude, description1, description2] = stopData;
+  const distance = haversineDistance(userLat, userLon, latitude, longitude);
+
+  return {
+    code: busStopCode,
+    latitude,
+    longitude,
+    description1,
+    description2,
+    distanceKm: distance,
+  };
+};
+
 export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
   const nearbyStopsWithServices = [];
 

@@ -1,40 +1,40 @@
 import React from "react";
 import { Link, useLocation } from "react-router";
-import "./Navbar.css";
+import styles from "./Navbar.module.css";
 
 const Navbar = () => {
   const location = useLocation();
 
   return (
-    <nav className="bottom-navbar">
+    <nav className={styles.bottomNavbar}>
       <Link
         to="/"
-        className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
+        className={`${styles.navLink} ${location.pathname === "/" ? styles.active : ""}`}
       >
-        <span className="nav-icon">📊</span>
-        <span className="nav-label">Dashboard</span>
+        <span className={styles.navIcon}>📊</span>
+        <span className={styles.navLabel}>Dashboard</span>
       </Link>
       <Link
         to="/nearby"
-        className={`nav-link ${location.pathname === "/nearby" ? "active" : ""}`}
+        className={`${styles.navLink} ${location.pathname === "/nearby" ? styles.active : ""}`}
       >
-        <span className="nav-icon">📍</span>
-        <span className="nav-label">Nearby</span>
+        <span className={styles.navIcon}>📍</span>
+        <span className={styles.navLabel}>Nearby</span>
       </Link>
       <Link
         to="/search"
-        className={`nav-link ${location.pathname === "/search" ? "active" : ""}`}
+        className={`${styles.navLink} ${location.pathname === "/search" ? styles.active : ""}`}
       >
-        <span className="nav-icon">🔎</span>
-        <span className="nav-label">Search</span>
+        <span className={styles.navIcon}>🔎</span>
+        <span className={styles.navLabel}>Search</span>
       </Link>
       {/*---------------------TO DELETE BEFORE SUBMISSION-----------------------------------*/}
       <Link
         to="/test"
-        className={`nav-link ${location.pathname === "/test" ? "active" : ""}`}
+        className={`${styles.navLink} ${location.pathname === "/test" ? styles.active : ""}`}
       >
-        <span className="nav-icon">📋</span>
-        <span className="nav-label">Test</span>
+        <span className={styles.navIcon}>📋</span>
+        <span className={styles.navLabel}>Test</span>
       </Link>
       {/*---------------------TO DELETE BEFORE SUBMISSION-----------------------------------*/}
     </nav>
