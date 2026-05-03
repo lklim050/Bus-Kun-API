@@ -5,12 +5,13 @@ import {
   getBusStopDetails,
   getUserLocation,
   getAllBusStop,
+  getStoredBusStop,
+  getBusStopDataFromStored,
 } from "../utils/busApi";
 import BusCard from "../components/BusCard";
 
 const DashBoard = () => {
   const [input, setInput] = useState("");
-  const [storedStops, setStoredStops] = useState([]); // Will be fetched from Airtable later
 
   //----------------------------GET USER LOCATION-------------------------------------
   const userLocationQuery = useQuery({
@@ -52,13 +53,40 @@ const DashBoard = () => {
       }
     : null;
 
-  // const getBusStopDes = (code) =>{
-  //   for (const stop of allBusStopQuery){
-  //   if (code === stop.code )
-  //   }
-  // }
+  // ------------------GET STORED BUS STOP FROM AIRTABLE-----------------------------------
+  const storedBusStopQuery = useQuery({
+    queryKey: ["storedBusStop"],
+    queryFn: getStoredBusStop,
+    staleTime: 600_000,
+    enabled: true,
+  });
+  const storedBusStopData =
+    storedBusStopQuery.data?.records?.map((record) => ({
+      id: record.id,
+      busCode: record.fields?.BusCodeStored || "N/A",
+      type: record.fields?.Type || "unknown",
+    })) ?? [];
 
-  //---------------------------------RETURN-------------------------------------------
+  const storedStopQuery = useQuery({
+    queryKey: [
+      "storedBusStopWithServices",
+      storedBusStopData.map((item) => item.busCode).join("|"),
+    ],
+    queryFn: () =>
+      getBusStopDataFromStored(
+        storedBusStopData,
+        import.meta.env.VITE_ACCKEY,
+        allBusStopQuery.data,
+        userLocationQuery.data?.latitude ?? 1.3,
+        userLocationQuery.data?.longitude ?? 103.84,
+      ),
+    staleTime: 60_000,
+    enabled: storedBusStopData.length > 0 && !!allBusStopQuery.data,
+  });
+
+  const storedStopData = storedStopQuery.data ?? [];
+
+  //------------------------------------RETURN------------------------------------------------
 
   return (
     <div>
@@ -77,14 +105,12 @@ const DashBoard = () => {
         Search
       </button>
       <br />
-      {JSON.stringify(input)}
-      <br />
 
       {/* {JSON.stringify(busStopQuery.data)} */}
       <br />
       {` ================================================================= `}
       <br />
-      {/* {JSON.stringify(stopData)} */}
+      {JSON.stringify(stopData)}
       <br />
       {` ================================================================= `}
       <br />
@@ -103,11 +129,13 @@ const DashBoard = () => {
         ))}
 
       {/* Stored Bus Stops from Airtable - mapping section */}
-      {storedStops.length > 0 && (
+      {storedStopQuery.isLoading && <h3>Loading stored stops...</h3>}
+      {storedStopQuery.isError && <h3>{storedStopQuery.error?.message}</h3>}
+      {storedStopData.length > 0 && (
         <div>
           <h2>Stored Bus Stops</h2>
-          {storedStops.map((stop) => (
-            <BusCard key={stop.code} stop={stop} />
+          {storedStopData.map((stop) => (
+            <BusCard key={stop.id || stop.code} stop={stop} />
           ))}
         </div>
       )}

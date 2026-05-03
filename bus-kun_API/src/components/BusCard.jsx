@@ -1,28 +1,9 @@
 import React from "react";
 import styles from "./BusCard.module.css";
+import { formatArrival } from "../utils/busApi";
 
 const BusCard = ({ stop }) => {
   if (!stop) return null;
-
-  const formatArrival = (bus) => {
-    const estimatedArrival = bus?.EstimatedArrival ?? "N/A";
-    const arrivalMs = new Date(estimatedArrival).getTime();
-
-    if (Number.isNaN(arrivalMs)) {
-      return "N/A";
-    }
-
-    const differenceInMinutes = Math.max(
-      0,
-      Math.round((arrivalMs - Date.now()) / 60000),
-    );
-
-    if (differenceInMinutes === 0) {
-      return "ARR";
-    }
-
-    return `${differenceInMinutes} min`;
-  };
 
   const distanceText = (() => {
     const d = Number(stop.distanceKm);
@@ -36,6 +17,7 @@ const BusCard = ({ stop }) => {
         <h4 className={styles.busStopTitle}>{stop.code}</h4>
         <p className={styles.busStopDescription}>{stop.description1}</p>
         <span className={styles.busStopDistance}>{distanceText}</span>
+        <button type="add">Fav</button>
       </div>
 
       {stop.services && stop.services.length > 0 ? (

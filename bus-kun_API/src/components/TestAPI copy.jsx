@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import {
   findNearbyStops as getNearbyStops,
-  formatNextBusTime,
+  formatArrival,
   getAllBusStop,
   getBusStopData,
   getNearbyBusStopData,
@@ -154,7 +154,9 @@ const TestAPI = () => {
               return (
                 <li key={index}>
                   Service {item.ServiceNo} - Next Bus:{" "}
-                  {formatNextBusTime(nextBuses)}
+                  {nextBuses
+                    .map((bus, idx) => `${formatArrival(bus)} (${bus.Load})`)
+                    .join(" | ")}
                 </li>
               );
             })}
@@ -194,7 +196,12 @@ const TestAPI = () => {
                       return (
                         <li key={`${stop.code}-${item.ServiceNo}-${index}`}>
                           Service {item.ServiceNo} - Next Bus:{" "}
-                          {formatNextBusTime(nextBuses)}
+                          {nextBuses
+                            .map(
+                              (bus, idx) =>
+                                `${formatArrival(bus)} (${bus.Load})`,
+                            )
+                            .join(" | ")}
                         </li>
                       );
                     })}

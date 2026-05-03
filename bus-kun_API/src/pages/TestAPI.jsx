@@ -2,12 +2,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import {
   findNearbyStops as getNearbyStops,
-  formatNextBusTime,
+  formatArrival,
   getAllBusStop,
   getBusStopData,
   getNearbyBusStopData,
   getUserLocation,
   nowSGTime,
+  getStoredBusStop,
 } from "../utils/busApi";
 
 // const urltest = "/ltaodataservice/v3/BusArrival?BusStopCode=83139&ServiceNo=15";
@@ -16,6 +17,20 @@ const TestAPI = () => {
   //   const queryClient = useQueryClient();
   const url = "/ltaodataservice/v3/BusArrival?BusStopCode=";
   const selectBusStopNo = "64029";
+  //------------------GET STORED BUS STOP DATA (AIRTABLE)---------------------------
+  const storedBusStopQuery = useQuery({
+    queryKey: ["storedBusStop"],
+    queryFn: getStoredBusStop,
+    staleTime: 600_000,
+    enabled: true,
+  });
+
+  const storedBusStopData =
+    storedBusStopQuery.data?.records?.map((record) => ({
+      id: record.id,
+      busCode: record.fields?.BusCodeStored || "N/A",
+      type: record.fields?.Type || "unknown",
+    })) ?? [];
 
   //-------------------GET BUS DATA--------------------------------------------
   const busStopQuery = useQuery({
@@ -154,7 +169,12 @@ const TestAPI = () => {
               return (
                 <li key={index}>
                   Service {item.ServiceNo} - Next Bus:{" "}
-                  {formatNextBusTime(nextBuses)}
+                  {nextBuses
+                    .map(
+                      (bus, idx) =>
+                        `${formatArrival(bus)} (${bus.Load})`,
+                    )
+                    .join(" | ")}
                 </li>
               );
             })}
@@ -194,7 +214,12 @@ const TestAPI = () => {
                       return (
                         <li key={`${stop.code}-${item.ServiceNo}-${index}`}>
                           Service {item.ServiceNo} - Next Bus:{" "}
-                          {formatNextBusTime(nextBuses)}
+                          {nextBuses
+                            .map(
+                              (bus, idx) =>
+                                `${formatArrival(bus)} (${bus.Load})`,
+                            )
+                            .join(" | ")}
                         </li>
                       );
                     })}
@@ -208,7 +233,12 @@ const TestAPI = () => {
         ) : (
           <p>No data available</p>
         ))}
-      {/* {JSON.stringify(nearbyBusStopArray)} */}
+      {`-------- get stored bus stop number with GET from airtable---------- `}
+
+      {/* {JSON.stringify(storedBusStopQuery.data.records[2])} */}
+      <br />
+      {JSON.stringify(storedBusStopData)}
+      {/* {storedBusStopQuery.isSuccess && } */}
     </div>
   );
 };

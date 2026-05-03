@@ -1,7 +1,7 @@
 import React from "react";
 import {
   findNearbyStops as getNearbyStops,
-  formatNextBusTime,
+  formatArrival,
   getAllBusStop,
   getBusStopData,
   getNearbyBusStopData,
@@ -84,7 +84,7 @@ const Nearby = () => {
         Fetch Nearby Bus Info
       </button>
       <br />
-      {JSON.stringify(nearbyBusStopQuery.data)}
+      {/* {JSON.stringify(nearbyBusStopQuery.data)} */}
       {nearbyBusStopQuery.isLoading && <h3>Loading...</h3>}
       {nearbyBusStopQuery.isError && (
         <h3>{nearbyBusStopQuery.error?.message}</h3>

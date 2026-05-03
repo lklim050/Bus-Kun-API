@@ -1,4 +1,6 @@
 export const BUS_ARRIVAL_URL = "/ltaodataservice/v3/BusArrival?BusStopCode=";
+export const AIR_TABLE_URL =
+  "https://api.airtable.com/v0/appc49EMnSFyGijl2/Table%201";
 
 export const nowSGTime = () => {
   const now = new Date();
@@ -12,34 +14,28 @@ export const nowSGTime = () => {
   return `${datePart}T${timePart}+08:00`;
 };
 
-export const formatNextBusTime = (nextBus) => {
-  if (!nextBus) {
-    return "No next bus data";
+export const formatArrival = (bus) => {
+  if (!bus) {
+    return "N/A";
   }
 
-  const buses = Array.isArray(nextBus) ? nextBus : [nextBus];
+  const estimatedArrival = bus?.EstimatedArrival ?? "N/A";
+  const arrivalMs = new Date(estimatedArrival).getTime();
 
-  return buses
-    .map((bus, index) => {
-      const estimatedArrival = bus?.EstimatedArrival ?? "N/A";
-      const arrivalMs = new Date(estimatedArrival).getTime();
+  if (Number.isNaN(arrivalMs)) {
+    return "N/A";
+  }
 
-      if (Number.isNaN(arrivalMs)) {
-        return `Bus ${index + 1}: N/A`;
-      }
+  const differenceInMinutes = Math.max(
+    0,
+    Math.round((arrivalMs - Date.now()) / 60000),
+  );
 
-      const differenceInMinutes = Math.max(
-        0,
-        Math.round((arrivalMs - Date.now()) / 60000),
-      );
+  if (differenceInMinutes === 0) {
+    return "ARR";
+  }
 
-      if (differenceInMinutes === 0) {
-        return `Bus ${index + 1}: ARR`;
-      }
-
-      return `Bus ${index + 1}: ${differenceInMinutes} min`;
-    })
-    .join(" | ");
+  return `${differenceInMinutes} min`;
 };
 
 export const haversineDistance = (lat1, lon1, lat2, lon2) => {
@@ -147,11 +143,79 @@ export const getBusStopDetails = (
   };
 };
 
-export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
-  const nearbyStopsWithServices = [];
+// export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
+//   const nearbyStopsWithServices = [];
 
-  for (let i = 0; i < nearbyStops.length; i++) {
-    const res = await fetch(`${BUS_ARRIVAL_URL}${nearbyStops[i].code}`, {
+//   for (let i = 0; i < nearbyStops.length; i++) {
+//     const res = await fetch(`${BUS_ARRIVAL_URL}${nearbyStops[i].code}`, {
+//       headers: { AccountKey: accountKey },
+//     });
+
+//     if (!res.ok) {
+//       throw new Error("cannot fetch bus data, please check url or location");
+//     }
+
+//     const data = await res.json();
+//     nearbyStopsWithServices.push({
+//       ...nearbyStops[i],
+//       services: data?.Services ?? [],
+//     });
+//   }
+
+//   return nearbyStopsWithServices;
+// };
+
+export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
+  // 1. Create an array of Promises immediately
+  const stopRequests = nearbyStops.map(async (stop) => {
+    const res = await fetch(`${BUS_ARRIVAL_URL}${stop.code}`, {
+      headers: { AccountKey: accountKey },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch arrival data for stop: " + stop.code);
+    }
+
+    const data = await res.json();
+
+    // Return the merged object (the original stop info + the new services)
+    return {
+      ...stop,
+      services: data?.Services ?? [],
+    };
+  });
+
+  // 2. Wait for all fetches to resolve in parallel
+  return Promise.all(stopRequests);
+};
+
+export const getStoredBusStop = async () => {
+  const res = await fetch(AIR_TABLE_URL, {
+    headers: {
+      // The word "Bearer" must be followed by a single space
+      Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+  });
+  return await res.json();
+};
+
+export const getBusStopDataFromStored = async (
+  storedBusStop,
+  accountKey,
+  allStopsData,
+  userLat = 1.3,
+  userLon = 103.84,
+) => {
+  if (!Array.isArray(storedBusStop) || storedBusStop.length === 0) {
+    return [];
+  }
+  // was advised to use map with async callback instead of for loop
+  const stopRequests = storedBusStop.map(async (storedStop) => {
+    const code = storedStop.busCode;
+    const details = getBusStopDetails(code, allStopsData, userLat, userLon);
+
+    const res = await fetch(`${BUS_ARRIVAL_URL}${code}`, {
       headers: { AccountKey: accountKey },
     });
 
@@ -160,11 +224,36 @@ export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
     }
 
     const data = await res.json();
-    nearbyStopsWithServices.push({
-      ...nearbyStops[i],
-      services: data?.Services ?? [],
-    });
-  }
 
-  return nearbyStopsWithServices;
+    return {
+      id: storedStop.id,
+      type: storedStop.type,
+      code,
+      description1:
+        details?.description1 || data?.BusStopName || "Unknown Stop",
+      description2: details?.description2 || "",
+      latitude: details?.latitude,
+      longitude: details?.longitude,
+      distanceKm: details?.distanceKm ?? 0,
+      services: data?.Services ?? [],
+    };
+  });
+  // this ensure all processes in function conclude before return
+  return Promise.all(stopRequests);
+};
+
+export const putStoredBusStop = async (busCode) => {
+  const res = await fetch(AIR_TABLE_URL, {
+    method: "POST",
+    headers: {
+      // The word "Bearer" must be followed by a single space
+      Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name: busCode.current.value }),
+  });
+  if (!res.ok) {
+    throw new Error("cannot add bus code to Dashboard");
+  }
+  return await res.json();
 };
