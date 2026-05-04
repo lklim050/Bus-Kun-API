@@ -125,7 +125,15 @@ const Nearby = () => {
         (nearbyBusDataEx.length > 0 ? (
           <div>
             {nearbyBusDataEx.map((stop) => (
-              <BusCard key={stop.code} stop={stop} />
+              <BusCard
+                key={stop.id || stop.code}
+                id={stop.id}
+                stop={stop}
+                code={stop.code}
+                description1={stop.description1}
+                services={stop.services}
+                distanceKm={stop.distanceKm}
+              />
             ))}
           </div>
         ) : (

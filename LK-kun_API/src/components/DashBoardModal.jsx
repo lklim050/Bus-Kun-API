@@ -1,0 +1,168 @@
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
+import BusCard from "./BusCard";
+import {
+  getBusStopData,
+  getBusStopDetails,
+  getUserLocation,
+  getAllBusStop,
+  getStoredBusStop,
+  getStoredBusStopData,
+} from "../utils/busApi";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import styles from "./DashBoardModal.module.css";
+
+const OverLay = (props) => {
+  const [input, setInput] = useState("");
+  const queryClient = useQueryClient();
+  //----------------------------GET USER LOCATION-------------------------------------
+  const userLocationQuery = useQuery({
+    queryKey: ["userLocation"],
+    queryFn: getUserLocation,
+    enabled: false, // false to stop query
+    staleTime: 60_000, // refresh every 60s
+  });
+
+  //------------------GET ALL BUS STOPS DATA-------------------------------------------
+  const allBusStopQuery = useQuery({
+    queryKey: ["allBusStop"],
+    queryFn: getAllBusStop,
+  });
+  const busStopQuery = useQuery({
+    queryKey: ["busstops"],
+    queryFn: () => getBusStopData(input, import.meta.env.VITE_ACCKEY),
+    enabled: false, // false to stop query
+    staleTime: 60_000, // auto refresh for 60s
+    //   refetchOnWindowFocus: false,  // don't refetch when tab is focused
+  });
+
+  // Wrap single query result into proper stop object with details from stops.json
+  const busStopDetails = getBusStopDetails(input, allBusStopQuery.data);
+  const busStopData = busStopQuery.data
+    ? {
+        code: busStopQuery.data.BusStopCode || input,
+        description1:
+          busStopDetails?.description1 ||
+          busStopQuery.data.BusStopName ||
+          "Unknown Stop",
+        description2: busStopDetails?.description2 || "",
+        latitude: busStopDetails?.latitude,
+        longitude: busStopDetails?.longitude,
+        distanceKm: busStopDetails?.distanceKm ?? 0,
+        services: busStopQuery.data.Services || [],
+      }
+    : null;
+  // ------------------GET STORED BUS STOP FROM AIRTABLE-----------------------------------
+  const storedBusStopQuery = useQuery({
+    queryKey: ["storedBusStop"],
+    queryFn: getStoredBusStop,
+    staleTime: 600_000,
+    enabled: true,
+  });
+  const storedBusStopData =
+    storedBusStopQuery.data?.records?.map((record) => ({
+      id: record.id,
+      busCode: record.fields?.BusCodeStored || "N/A",
+      type: record.fields?.Type || "unknown",
+    })) ?? [];
+
+  const storedStopQuery = useQuery({
+    queryKey: [
+      "storedBusStopWithServices",
+      storedBusStopData.map((item) => item.busCode).join("|"),
+    ],
+    queryFn: () =>
+      getStoredBusStopData(
+        storedBusStopData,
+        import.meta.env.VITE_ACCKEY,
+        allBusStopQuery.data,
+        userLocationQuery.data?.latitude ?? 1.3,
+        userLocationQuery.data?.longitude ?? 103.84,
+      ),
+    staleTime: 60_000,
+    enabled: storedBusStopData.length > 0 && !!allBusStopQuery.data,
+  });
+
+  const storedStopData = storedStopQuery.data
+    ? [...storedStopQuery.data].sort((a, b) => a.distanceKm - b.distanceKm)
+    : [];
+
+  //---------------------GET BUS STOP FROM INPUT (MODIFIED)---------------------------------
+
+  // check stored id/type when available so BusCard shows correct saved state
+  const busStopDataEx = busStopData
+    ? (() => {
+        const found = storedBusStopData.find(
+          (s) => String(s.busCode) === String(busStopData.code),
+        );
+        return found
+          ? { ...busStopData, id: found.id, type: found.type }
+          : busStopData;
+      })()
+    : null;
+
+  return (
+    <div className={styles.backdrop}>
+      <div className={styles.modal}>
+        <br />
+        <input
+          type="text"
+          name="busStopNo"
+          inputMode="numeric"
+          pattern="\d"
+          maxLength={5}
+          value={input}
+          placeholder="input bus stop no."
+          onChange={(e) => setInput(e.target.value.replace(/\D/g, ""))}
+        />
+        <button type="button" onClick={() => busStopQuery.refetch()}>
+          Search
+        </button>
+        <button
+          onClick={() => {
+            setInput("");
+            queryClient.removeQueries({ queryKey: ["busstops"] });
+            props.setShowModal(false);
+          }}
+        >
+          Close Modal
+        </button>
+        <br />
+        {busStopQuery.isLoading && <h3>Loading...</h3>}
+        {busStopQuery.isError && <h3>{busStopQuery.error?.message}</h3>}
+        <br />
+        {(busStopQuery.isSuccess || busStopQuery.data) &&
+          (busStopDataEx && busStopDataEx.services.length > 0 ? (
+            <div>
+              <h3>Search Result</h3>
+              <BusCard
+                key={busStopDataEx.id || busStopDataEx.code}
+                id={busStopDataEx.id}
+                stop={busStopDataEx}
+                code={busStopDataEx.code}
+                description1={busStopDataEx.description1}
+                services={busStopDataEx.services}
+                distanceKm={busStopDataEx.distanceKm}
+              />
+            </div>
+          ) : (
+            <p>No bus services available for this stop</p>
+          ))}
+      </div>
+    </div>
+  );
+};
+
+const DashBoardModal = (props) => {
+  return (
+    <div>
+      {" "}
+      {ReactDOM.createPortal(
+        <OverLay setShowModal={props.setShowModal} />,
+        document.querySelector("#modal-root"),
+      )}
+    </div>
+  );
+};
+
+export default DashBoardModal;

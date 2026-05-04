@@ -13,7 +13,6 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Routes>
-        {/* <TestAPI /> */}
         <Route path="/" element={<DashBoard />} />
         <Route path="/nearby" element={<Nearby />} />
         <Route path="/search" element={<Search />} />

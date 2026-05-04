@@ -8,8 +8,8 @@ const BusCard = (props) => {
 
   const queryClient = useQueryClient();
 
-  const [isFavorited, setIsFavorited] = useState(Boolean(props.stop.id));
-  const [storedId, setStoredId] = useState(props.stop.id || null);
+  const [isFavorited, setIsFavorited] = useState(Boolean(props.id));
+  const [storedId, setStoredId] = useState(props.id || null);
   const [toast, setToast] = useState(null);
 
   const addDeleteFavourite = async ({ targetID, busStopCode }) => {
@@ -50,11 +50,11 @@ const BusCard = (props) => {
       if (variables?.targetID) {
         setIsFavorited(false);
         setStoredId(null);
-        setToast({ type: "success", message: "Removed from favorites" });
+        setToast({ type: "success", message: "Removed done" });
       } else {
         setIsFavorited(true);
         if (data?.id) setStoredId(data.id);
-        setToast({ type: "success", message: "Saved to favorites" });
+        setToast({ type: "success", message: "Saved done" });
       }
       window.setTimeout(() => setToast(null), 3000);
     },
@@ -68,18 +68,18 @@ const BusCard = (props) => {
     if (isFavorited) {
       addDeleteMutation.mutate({
         targetID: storedId,
-        busStopCode: props.stop.code,
+        busStopCode: props.code,
       });
     } else {
       addDeleteMutation.mutate({
         targetID: null,
-        busStopCode: props.stop.code,
+        busStopCode: props.code,
       });
     }
   };
 
   const distanceText = (() => {
-    const d = Number(props.stop.distanceKm);
+    const d = Number(props.distanceKm);
     // this check if distance is passed properly
     return Number.isFinite(d) ? `${d.toFixed(2)} km away` : "Distance unknown";
   })();
@@ -87,8 +87,8 @@ const BusCard = (props) => {
   return (
     <div className={styles.busCard}>
       <div className={styles.busCardHeader}>
-        <h4 className={styles.busStopTitle}>{props.stop.code}</h4>
-        <p className={styles.busStopDescription}>{props.stop.description1}</p>
+        <h4 className={styles.busStopTitle}>{props.code}</h4>
+        <p className={styles.busStopDescription}>{props.description1}</p>
         <span className={styles.busStopDistance}>{distanceText}</span>
         <button
           onClick={handleToggleFavorite}
@@ -111,10 +111,10 @@ const BusCard = (props) => {
         )}
       </div>
 
-      {props.stop.services && props.stop.services.length > 0 ? (
+      {props.services && props.services.length > 0 ? (
         <div className={styles.busServicesContainer}>
           <ul className={styles.busServicesList}>
-            {props.stop.services.map((item, index) => {
+            {props.services.map((item, index) => {
               const nextBuses = [
                 item.NextBus,
                 item.NextBus2,
@@ -123,7 +123,7 @@ const BusCard = (props) => {
 
               return (
                 <li
-                  key={`${props.stop.code}-${item.ServiceNo}-${index}`}
+                  key={`${props.code}-${item.ServiceNo}-${index}`}
                   className={styles.busServiceItem}
                 >
                   <span className={styles.serviceNumber}>{item.ServiceNo}</span>
@@ -131,7 +131,7 @@ const BusCard = (props) => {
                     {nextBuses.length > 0 ? (
                       nextBuses.map((bus, busIndex) => (
                         <span
-                          key={`${props.stop.code}-${item.ServiceNo}-${busIndex}`}
+                          key={`${props.code}-${item.ServiceNo}-${busIndex}`}
                           className={styles.serviceArrivalLine}
                         >
                           {formatArrival(bus)} ({bus.Load})

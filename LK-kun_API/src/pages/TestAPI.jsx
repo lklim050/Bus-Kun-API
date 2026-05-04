@@ -9,6 +9,7 @@ import {
   getUserLocation,
   nowSGTime,
   getStoredBusStop,
+  fetchLtaData,
 } from "../utils/busApi";
 
 // const urltest = "/ltaodataservice/v3/BusArrival?BusStopCode=83139&ServiceNo=15";
@@ -174,62 +175,9 @@ const TestAPI = () => {
   //   });
   // };
 
-  const fetchDataFromLTA = async (busCode) => {
-    const res = await fetch(`/map/busService/bus_route_xml/${busCode}.xml`);
-
-    if (!res.ok) {
-      throw new Error("cannot fetch from lta.gov.sg");
-    }
-
-    const convertXMLtoText = await res.text(); //from raw data (even though it is xml) to string,
-    const parser = new DOMParser(); // create a Parser Engine from class
-    const xmlDoc = parser.parseFromString(convertXMLtoText, "text/xml"); // convert back to DOM
-
-    // Target the <direction> tags first
-    const directions = xmlDoc.getElementsByTagName("direction");
-
-    // Array.from(directions) create an array of DOM element
-    return Array.from(directions).map((dir) => {
-      // 2. Inside each direction, find all its child <busstop> tags
-      const stops = dir.getElementsByTagName("busstop");
-      return {
-        directionName: dir.getAttribute("name"), // "From Punggol Int to Yishun Int"
-
-        // 3. Nest the array of stops inside this direction object
-        stops: Array.from(stops).map((stop) => ({
-          stopCode: stop.getAttribute("name"),
-          description: stop.getElementsByTagName("details")[0]?.textContent,
-          // Reach into operating hours for each stop
-          timing: {
-            weekdaysFirst: stop
-              .getElementsByTagName("weekdays")[0]
-              ?.getElementsByTagName("first")[0]?.textContent,
-            weekdaysLast: stop
-              .getElementsByTagName("weekdays")[0]
-              ?.getElementsByTagName("last")[0]?.textContent,
-
-            saturdayFirst: stop
-              .getElementsByTagName("saturdays")[0]
-              ?.getElementsByTagName("first")[0]?.textContent,
-            saturdayLast: stop
-              .getElementsByTagName("saturdays")[0]
-              ?.getElementsByTagName("last")[0]?.textContent,
-
-            sundayFirst: stop
-              .getElementsByTagName("sundays")[0]
-              ?.getElementsByTagName("first")[0]?.textContent,
-            sundayLast: stop
-              .getElementsByTagName("sundays")[0]
-              ?.getElementsByTagName("last")[0]?.textContent,
-          },
-        })),
-      };
-    });
-  };
-
   const LtaDataQuery = useQuery({
     queryKey: ["ltadata"],
-    queryFn: () => fetchDataFromLTA(input),
+    queryFn: () => fetchLtaData(input),
     enabled: false,
   });
 
