@@ -2,6 +2,7 @@ export const BUS_ARRIVAL_URL = "/ltaodataservice/v3/BusArrival?BusStopCode=";
 export const AIR_TABLE_URL =
   "https://api.airtable.com/v0/appc49EMnSFyGijl2/Table%201";
 
+//-----------------------------GET and FORMAT CURRENT TIME----------------------------------------------------
 export const nowSGTime = () => {
   const now = new Date();
   const datePart = now.toLocaleDateString("sv-SE", {
@@ -14,6 +15,7 @@ export const nowSGTime = () => {
   return `${datePart}T${timePart}+08:00`;
 };
 
+//-----------------------DIFFERENCE BETWEEN CURRENT TIME AND ARRIVAL TIME-------------------------------------
 export const formatArrival = (bus) => {
   if (!bus) {
     return "N/A";
@@ -37,7 +39,7 @@ export const formatArrival = (bus) => {
 
   return `${differenceInMinutes} min`;
 };
-
+//--------------------HAVERSINE METHOD TO GET DISTANCE FROM LAT LONG COORDINATE---------------------------------
 export const haversineDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -51,7 +53,7 @@ export const haversineDistance = (lat1, lon1, lat2, lon2) => {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 };
-
+//----------------------------FETCH ALL SG BUS STOP FROM STATIC JSON FILE ---------------------------------------
 export const getAllBusStop = async () => {
   const res = await fetch("/stops.json");
   if (!res.ok) {
@@ -59,7 +61,7 @@ export const getAllBusStop = async () => {
   }
   return res.json();
 };
-
+//-------------------------RETURN NEARBY BUS CODES WITH REF TO USER LOCATION -------------------------------------
 export const findNearbyStops = (
   allBusStops,
   lat = 1.3,
@@ -84,29 +86,30 @@ export const findNearbyStops = (
     .filter((stop) => stop.distanceKm <= radiusKm)
     .sort((a, b) => a.distanceKm - b.distanceKm);
 };
-
+//--------------------------GET USER COORDINATE USING NAVIGATOR.GEOLOCATION-------------------------------------------
 export const getUserLocation = async () => {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      reject(new Error("Geolocation is not supported by your browser"));
+      // reject does not hard stop like throw
+      reject(new Error("Geolocation might not be supported"));
       return;
     }
-
+    // if success, return those resolved
     navigator.geolocation.getCurrentPosition(
       (position) => {
         resolve({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy,
-          timestamp: position.timestamp,
+          accuracy: position.coords.accuracy, //optional
+          timestamp: position.timestamp, //optional
         });
       },
-      (error) => reject(error),
-      { enableHighAccuracy: true, timeout: 10000 },
+      (error) => reject(error), // error such as permission, coordinate not found or timeout
+      { enableHighAccuracy: true, timeout: 10000 }, // options for performance
     );
   });
 };
-
+//---------------------------------------------------------------------------------------------------------------
 export const getBusStopData = async (busStopCode, accountKey) => {
   const res = await fetch(`${BUS_ARRIVAL_URL}${busStopCode}`, {
     headers: { AccountKey: accountKey },
@@ -118,7 +121,7 @@ export const getBusStopData = async (busStopCode, accountKey) => {
 
   return res.json();
 };
-
+//---------------------------------------------------------------------------------------------------------------
 export const getBusStopDetails = (
   busStopCode,
   allStopsData,
@@ -142,29 +145,7 @@ export const getBusStopDetails = (
     distanceKm: distance,
   };
 };
-
-// export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
-//   const nearbyStopsWithServices = [];
-
-//   for (let i = 0; i < nearbyStops.length; i++) {
-//     const res = await fetch(`${BUS_ARRIVAL_URL}${nearbyStops[i].code}`, {
-//       headers: { AccountKey: accountKey },
-//     });
-
-//     if (!res.ok) {
-//       throw new Error("cannot fetch bus data, please check url or location");
-//     }
-
-//     const data = await res.json();
-//     nearbyStopsWithServices.push({
-//       ...nearbyStops[i],
-//       services: data?.Services ?? [],
-//     });
-//   }
-
-//   return nearbyStopsWithServices;
-// };
-
+//---------------------------------------------------------------------------------------------------------------
 export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
   // 1. Create an array of Promises immediately
   const stopRequests = nearbyStops.map(async (stop) => {
@@ -189,6 +170,30 @@ export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
   return Promise.all(stopRequests);
 };
 
+// // this is the old for loop functions TBD
+// export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
+//   const nearbyStopsWithServices = [];
+
+//   for (let i = 0; i < nearbyStops.length; i++) {
+//     const res = await fetch(`${BUS_ARRIVAL_URL}${nearbyStops[i].code}`, {
+//       headers: { AccountKey: accountKey },
+//     });
+
+//     if (!res.ok) {
+//       throw new Error("cannot fetch bus data, please check url or location");
+//     }
+
+//     const data = await res.json();
+//     nearbyStopsWithServices.push({
+//       ...nearbyStops[i],
+//       services: data?.Services ?? [],
+//     });
+//   }
+
+//   return nearbyStopsWithServices;
+// };
+
+//---------------------------------------------------------------------------------------------------------------
 export const getStoredBusStop = async () => {
   const res = await fetch(AIR_TABLE_URL, {
     headers: {
@@ -199,8 +204,8 @@ export const getStoredBusStop = async () => {
   });
   return await res.json();
 };
-
-export const getBusStopDataFromStored = async (
+//---------------------------------------------------------------------------------------------------------------
+export const getStoredBusStopData = async (
   storedBusStop,
   accountKey,
   allStopsData,
@@ -241,19 +246,4 @@ export const getBusStopDataFromStored = async (
   // this ensure all processes in function conclude before return
   return Promise.all(stopRequests);
 };
-
-export const putStoredBusStop = async (busCode) => {
-  const res = await fetch(AIR_TABLE_URL, {
-    method: "POST",
-    headers: {
-      // The word "Bearer" must be followed by a single space
-      Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ name: busCode.current.value }),
-  });
-  if (!res.ok) {
-    throw new Error("cannot add bus code to Dashboard");
-  }
-  return await res.json();
-};
+//---------------------------------------------------------------------------------------------------------------

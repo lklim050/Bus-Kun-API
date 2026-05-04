@@ -6,7 +6,7 @@ import {
   getUserLocation,
   getAllBusStop,
   getStoredBusStop,
-  getBusStopDataFromStored,
+  getStoredBusStopData,
 } from "../utils/busApi";
 import BusCard from "../components/BusCard";
 
@@ -73,7 +73,7 @@ const DashBoard = () => {
       storedBusStopData.map((item) => item.busCode).join("|"),
     ],
     queryFn: () =>
-      getBusStopDataFromStored(
+      getStoredBusStopData(
         storedBusStopData,
         import.meta.env.VITE_ACCKEY,
         allBusStopQuery.data,
@@ -84,9 +84,13 @@ const DashBoard = () => {
     enabled: storedBusStopData.length > 0 && !!allBusStopQuery.data,
   });
 
-  const storedStopData = storedStopQuery.data ?? [];
+  const storedStopData = storedStopQuery.data
+    ? [...storedStopQuery.data].sort((a, b) => a.distanceKm - b.distanceKm)
+    : [];
 
-  // enrich single search stop with stored id/type when available so BusCard shows correct saved state
+  //---------------------GET BUS STOP FROM INPUT (MODIFIED)---------------------------------
+
+  // check stored id/type when available so BusCard shows correct saved state
   const busStopDataEx = busStopData
     ? (() => {
         const found = storedBusStopData.find(
@@ -103,6 +107,25 @@ const DashBoard = () => {
   return (
     <div>
       <h1>DASHBOARD</h1>
+      {` ================================================================= `}
+      <br />
+      <button onClick={() => userLocationQuery.refetch()}>
+        Fetch user Location
+      </button>
+      <br />
+      {`This is Your Location:`}
+      <br />
+      {userLocationQuery.isSuccess && userLocationQuery.data ? (
+        <p>{`Lat: ${userLocationQuery.data.latitude}, Long: ${userLocationQuery.data.longitude}`}</p>
+      ) : (
+        <p>
+          location not ON, using fallback location Plaza Singapura (lat:1.3,
+          lon=103.84)
+        </p>
+      )}
+      <br />
+      {` ================================================================= `}
+      <br />
       <input
         type="text"
         name="busStopNo"
@@ -122,7 +145,7 @@ const DashBoard = () => {
       <br />
       {` ================================================================= `}
       <br />
-      {/* {JSON.stringify(busStopData)} */}
+      {/* {`storedStopData is: ${JSON.stringify(storedStopData)}`} */}
       <br />
       {` ================================================================= `}
       <br />
@@ -141,6 +164,10 @@ const DashBoard = () => {
         ))}
       <br />
       {` ================================================================= `}
+      <br />
+      <button onClick={() => storedStopQuery.refetch()}>
+        Refresh Stored Bus Stop
+      </button>
       <br />
       {/* Stored Bus Stops from Airtable - mapping section */}
       {storedStopQuery.isLoading && <h3>Loading your favourites stops...</h3>}
