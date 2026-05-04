@@ -89,6 +89,9 @@ const Nearby = () => {
   //--------------------------------RETURN--------------------------------------------
   return (
     <div>
+      <h1>NEARBY</h1>
+      {` ================================================================= `}
+      <br />
       <button onClick={() => userLocationQuery.refetch()}>
         Fetch user Location
       </button>
@@ -103,6 +106,8 @@ const Nearby = () => {
           lon=103.84)
         </p>
       )}
+      <br />
+      {` ================================================================= `}
       <br />
       <button onClick={() => nearbyBusStopQuery.refetch()}>
         Fetch Nearby Bus Info

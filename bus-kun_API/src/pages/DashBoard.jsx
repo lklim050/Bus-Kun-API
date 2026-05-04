@@ -102,7 +102,7 @@ const DashBoard = () => {
 
   return (
     <div>
-      <h1>Dashboard</h1>
+      <h1>DASHBOARD</h1>
       <input
         type="text"
         name="busStopNo"
@@ -139,7 +139,9 @@ const DashBoard = () => {
         ) : (
           <p>No bus services available for this stop</p>
         ))}
-
+      <br />
+      {` ================================================================= `}
+      <br />
       {/* Stored Bus Stops from Airtable - mapping section */}
       {storedStopQuery.isLoading && <h3>Loading your favourites stops...</h3>}
       {storedStopQuery.isError && <h3>{storedStopQuery.error?.message}</h3>}
