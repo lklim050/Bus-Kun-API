@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styles from "./BusCard.module.css";
-import { formatArrival, AIR_TABLE_URL } from "../utils/busApi";
+import { formatArrival } from "../utils/busApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const BusCard = (props) => {
@@ -14,7 +14,9 @@ const BusCard = (props) => {
 
   const addDeleteFavourite = async ({ targetID, busStopCode }) => {
     const isDeleting = !!targetID;
-    const url = isDeleting ? `${AIR_TABLE_URL}/${targetID}` : AIR_TABLE_URL;
+    const url = isDeleting
+      ? `${import.meta.env.VITE_AIRTABLE_URL}/${targetID}`
+      : import.meta.env.VITE_AIRTABLE_URL;
 
     const res = await fetch(url, {
       method: isDeleting ? "DELETE" : "POST",
@@ -24,7 +26,9 @@ const BusCard = (props) => {
       },
       body: isDeleting
         ? null
-        : JSON.stringify({ fields: { BusCodeStored: busStopCode, Type: "Favorite" } }),
+        : JSON.stringify({
+            fields: { BusCodeStored: busStopCode, Type: "Favorite" },
+          }),
     });
 
     if (!res.ok) {
@@ -36,7 +40,10 @@ const BusCard = (props) => {
   const addDeleteMutation = useMutation({
     mutationFn: addDeleteFavourite,
     onMutate: (variables) => {
-      setToast({ type: "pending", message: variables?.targetID ? "Removing..." : "Saving..." });
+      setToast({
+        type: "pending",
+        message: variables?.targetID ? "Removing..." : "Saving...",
+      });
     },
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["storedBusStop"] });
@@ -59,9 +66,15 @@ const BusCard = (props) => {
 
   const handleToggleFavorite = () => {
     if (isFavorited) {
-      addDeleteMutation.mutate({ targetID: storedId, busStopCode: props.stop.code });
+      addDeleteMutation.mutate({
+        targetID: storedId,
+        busStopCode: props.stop.code,
+      });
     } else {
-      addDeleteMutation.mutate({ targetID: null, busStopCode: props.stop.code });
+      addDeleteMutation.mutate({
+        targetID: null,
+        busStopCode: props.stop.code,
+      });
     }
   };
 
@@ -77,15 +90,24 @@ const BusCard = (props) => {
         <h4 className={styles.busStopTitle}>{props.stop.code}</h4>
         <p className={styles.busStopDescription}>{props.stop.description1}</p>
         <span className={styles.busStopDistance}>{distanceText}</span>
-        <button onClick={handleToggleFavorite} disabled={addDeleteMutation.isLoading}>
+        <button
+          onClick={handleToggleFavorite}
+          disabled={addDeleteMutation.isLoading}
+        >
           {addDeleteMutation.isLoading
             ? "..."
             : isFavorited
-            ? "❤️ Saved"
-            : "🤍 Not Saved"}
+              ? "❤️ Saved"
+              : "🤍 Not Saved"}
         </button>
         {toast && (
-          <div className={toast.type === "error" ? styles.toastError : styles.toast}>{toast.message}</div>
+          <div
+            className={
+              toast.type === "error" ? styles.toastError : styles.toast
+            }
+          >
+            {toast.message}
+          </div>
         )}
       </div>
 

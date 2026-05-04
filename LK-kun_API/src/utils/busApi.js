@@ -1,6 +1,4 @@
 export const BUS_ARRIVAL_URL = "/ltaodataservice/v3/BusArrival?BusStopCode=";
-export const AIR_TABLE_URL =
-  "https://api.airtable.com/v0/appc49EMnSFyGijl2/Table%201";
 
 //-----------------------------GET and FORMAT CURRENT TIME----------------------------------------------------
 export const nowSGTime = () => {
@@ -195,7 +193,7 @@ export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
 
 //---------------------------------------------------------------------------------------------------------------
 export const getStoredBusStop = async () => {
-  const res = await fetch(AIR_TABLE_URL, {
+  const res = await fetch(import.meta.env.VITE_AIRTABLE_URL, {
     headers: {
       // The word "Bearer" must be followed by a single space
       Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_TOKEN}`,

@@ -112,6 +112,7 @@ const DashBoard = () => {
       <button onClick={() => userLocationQuery.refetch()}>
         Fetch user Location
       </button>
+      {userLocationQuery.isLoading && <p>Getting user Location</p>}
       <br />
       {`This is Your Location:`}
       <br />
@@ -168,6 +169,7 @@ const DashBoard = () => {
       <button onClick={() => storedStopQuery.refetch()}>
         Refresh Stored Bus Stop
       </button>
+      {storedBusStopQuery.isLoading && <p>Refreshing your favourites</p>}
       <br />
       {/* Stored Bus Stops from Airtable - mapping section */}
       {storedStopQuery.isLoading && <h3>Loading your favourites stops...</h3>}

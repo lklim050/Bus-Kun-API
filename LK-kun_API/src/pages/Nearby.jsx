@@ -96,6 +96,8 @@ const Nearby = () => {
         Fetch user Location
       </button>
       <br />
+      {userLocationQuery.isLoading && <p>Getting user Location</p>}
+      <br />
       {`This is Your Location:`}
       <br />
       {userLocationQuery.isSuccess && userLocationQuery.data ? (
