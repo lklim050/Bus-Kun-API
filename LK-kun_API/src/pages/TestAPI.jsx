@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import React, { useState } from "react";
 import {
   findNearbyStops as getNearbyStops,
   formatArrival,
@@ -14,6 +14,7 @@ import {
 // const urltest = "/ltaodataservice/v3/BusArrival?BusStopCode=83139&ServiceNo=15";
 
 const TestAPI = () => {
+  const [input, setInput] = useState("");
   //   const queryClient = useQueryClient();
   const url = "/ltaodataservice/v3/BusArrival?BusStopCode=";
   const selectBusStopNo = "64029";
@@ -96,6 +97,142 @@ const TestAPI = () => {
   // return an empty array if return data is undefined to prevent runtime clash
   const nearbyBusData = nearbyBusStopQuery.data ?? [];
 
+  //-----------------------GET FROM LTA.GOV.SG----------------------------------------
+
+  // const fetchDataFromLTA = async (busCode) => {
+  //   const res = await fetch(`/map/busService/bus_route_xml/${busCode}.xml`);
+
+  //   if (!res.ok) {
+  //     throw new Error("cannot fetch from lta.gov.sg");
+  //   }
+
+  //   const convertXMLtoText = await res.text();
+  //   const parser = new DOMParser();
+  //   const xmlDoc = parser.parseFromString(convertXMLtoText, "text/xml");
+
+  //   // 1. Target all <busstop> elements
+  //   const busStops = xmlDoc.getElementsByTagName("busstop");
+
+  //   return Array.from(busStops).map((stop) => {
+  //     // 2. Helper function to get text from nested tags safely
+  //     const getNestedText = (parent, selectors) => {
+  //       let element = parent;
+  //       for (const s of selectors) {
+  //         element = element?.getElementsByTagName(s)[0];
+  //       }
+  //       return element?.textContent || "";
+  //     };
+
+  //     return {
+  //       stopCode: stop.getAttribute("name"), // 65009
+  //       isWab: stop.getAttribute("wab") === "true", // Wheelchair accessible
+  //       description: stop.getElementsByTagName("details")[0]?.textContent,
+
+  //       // 3. Reaching deep into the operating hours
+  //       timing: {
+  //         weekdayFirst: getNestedText(stop, ["weekdays", "first"]),
+  //         weekdayLast: getNestedText(stop, ["weekdays", "last"]),
+  //         satFirst: getNestedText(stop, ["saturdays", "first"]),
+  //         satLast: getNestedText(stop, ["saturdays", "last"]),
+  //         sunFirst: getNestedText(stop, ["sundays", "first"]),
+  //         sunLast: getNestedText(stop, ["sundays", "last"]),
+  //       },
+  //     };
+  //   });
+  // };
+
+  // const fetchDataFromLTA = async (busCode) => {
+  //   const res = await fetch(`/map/busService/bus_route_xml/${busCode}.xml`);
+
+  //   if (!res.ok) {
+  //     throw new Error("cannot fetch from lta.gov.sg");
+  //   }
+
+  //   const convertXMLtoText = await res.text(); //from raw data (even though it is xml) to string,
+  //   const parser = new DOMParser(); // create a Parser Engine from class
+  //   const xmlDoc = parser.parseFromString(convertXMLtoText, "text/xml"); // convert back to DOM
+
+  //   // 1. Target the <direction> tags first
+  //   const directions = xmlDoc.getElementsByTagName("direction");
+
+  //   return Array.from(directions).map((dir) => {
+  //     // 2. Inside each direction, find all its child <busstop> tags
+  //     const stops = dir.getElementsByTagName("busstop");
+
+  //     return {
+  //       directionName: dir.getAttribute("name"), // "From Punggol Int to Yishun Int"
+
+  //       // 3. Nest the array of stops inside this direction object
+  //       stops: Array.from(stops).map((stop) => ({
+  //         stopCode: stop.getAttribute("name"),
+  //         description: stop.getElementsByTagName("details")[0]?.textContent,
+  //         // Reach into operating hours for each stop
+  //         firstBus: stop.getElementsByTagName("first")[0]?.textContent,
+  //         lastBus: stop.getElementsByTagName("last")[0]?.textContent,
+  //       })),
+  //     };
+  //   });
+  // };
+
+  const fetchDataFromLTA = async (busCode) => {
+    const res = await fetch(`/map/busService/bus_route_xml/${busCode}.xml`);
+
+    if (!res.ok) {
+      throw new Error("cannot fetch from lta.gov.sg");
+    }
+
+    const convertXMLtoText = await res.text(); //from raw data (even though it is xml) to string,
+    const parser = new DOMParser(); // create a Parser Engine from class
+    const xmlDoc = parser.parseFromString(convertXMLtoText, "text/xml"); // convert back to DOM
+
+    // Target the <direction> tags first
+    const directions = xmlDoc.getElementsByTagName("direction");
+
+    // Array.from(directions) create an array of DOM element
+    return Array.from(directions).map((dir) => {
+      // 2. Inside each direction, find all its child <busstop> tags
+      const stops = dir.getElementsByTagName("busstop");
+      return {
+        directionName: dir.getAttribute("name"), // "From Punggol Int to Yishun Int"
+
+        // 3. Nest the array of stops inside this direction object
+        stops: Array.from(stops).map((stop) => ({
+          stopCode: stop.getAttribute("name"),
+          description: stop.getElementsByTagName("details")[0]?.textContent,
+          // Reach into operating hours for each stop
+          timing: {
+            weekdaysFirst: stop
+              .getElementsByTagName("weekdays")[0]
+              ?.getElementsByTagName("first")[0]?.textContent,
+            weekdaysLast: stop
+              .getElementsByTagName("weekdays")[0]
+              ?.getElementsByTagName("last")[0]?.textContent,
+
+            saturdayFirst: stop
+              .getElementsByTagName("saturdays")[0]
+              ?.getElementsByTagName("first")[0]?.textContent,
+            saturdayLast: stop
+              .getElementsByTagName("saturdays")[0]
+              ?.getElementsByTagName("last")[0]?.textContent,
+
+            sundayFirst: stop
+              .getElementsByTagName("sundays")[0]
+              ?.getElementsByTagName("first")[0]?.textContent,
+            sundayLast: stop
+              .getElementsByTagName("sundays")[0]
+              ?.getElementsByTagName("last")[0]?.textContent,
+          },
+        })),
+      };
+    });
+  };
+
+  const LtaDataQuery = useQuery({
+    queryKey: ["ltadata"],
+    queryFn: () => fetchDataFromLTA(input),
+    enabled: false,
+  });
+
   //--------------------------------RETURN--------------------------------------------
   return (
     <div>
@@ -170,10 +307,7 @@ const TestAPI = () => {
                 <li key={index}>
                   Service {item.ServiceNo} - Next Bus:{" "}
                   {nextBuses
-                    .map(
-                      (bus, idx) =>
-                        `${formatArrival(bus)} (${bus.Load})`,
-                    )
+                    .map((bus, idx) => `${formatArrival(bus)} (${bus.Load})`)
                     .join(" | ")}
                 </li>
               );
@@ -238,7 +372,31 @@ const TestAPI = () => {
       {/* {JSON.stringify(storedBusStopQuery.data.records[2])} */}
       <br />
       {JSON.stringify(storedBusStopData)}
+      <br />
       {/* {storedBusStopQuery.isSuccess && } */}
+      {`-------- get formated data of xml file from LTA.gov.sg---------- `}
+      <br />
+      <input
+        type="text"
+        name="busNo"
+        inputMode="numeric"
+        pattern="\d"
+        value={input}
+        placeholder="input bus no."
+        onChange={(e) => setInput(e.target.value)}
+      />
+      <button type="button" onClick={() => LtaDataQuery.refetch()}>
+        SUBMIT
+      </button>
+      <br />
+      {LtaDataQuery.isLoading && <p>Fetching LTA DATA...</p>}
+      {LtaDataQuery.isError && <p>{LtaDataQuery.error.message}</p>}
+      <br />
+      {LtaDataQuery.isSuccess && JSON.stringify(LtaDataQuery.data)}
+      <br />
+      <br />
+      <br />
+      <br />
     </div>
   );
 };

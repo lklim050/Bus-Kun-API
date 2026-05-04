@@ -12,6 +12,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      "/map": {
+        target: "https://www.lta.gov.sg",
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 });
