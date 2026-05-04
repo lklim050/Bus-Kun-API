@@ -69,7 +69,7 @@ const DashBoard = () => {
       <br />
       <button onClick={() => setShowModal(true)}>Open Modal</button>
       {showModal && <DashBoardModal setShowModal={setShowModal} />}
-
+      <br />
       {` ================================================================= `}
       <br />
       <button onClick={() => userLocationQuery.refetch()}>

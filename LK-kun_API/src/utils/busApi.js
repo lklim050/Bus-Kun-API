@@ -271,7 +271,7 @@ export const fetchLtaData = async (busCode) => {
   const res = await fetch(`/map/busService/bus_route_xml/${busCode}.xml`);
 
   if (!res.ok) {
-    throw new Error("cannot fetch from lta.gov.sg");
+    throw new Error("no data or invalid input");
   }
 
   const convertXMLtoText = await res.text(); //from raw data (even though it is xml) to string,
