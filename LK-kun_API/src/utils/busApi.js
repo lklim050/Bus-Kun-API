@@ -1,5 +1,3 @@
-export const BUS_ARRIVAL_URL = "/ltaodataservice/v3/BusArrival?BusStopCode=";
-
 //-----------------------------GET and FORMAT CURRENT TIME----------------------------------------------------
 export const nowSGTime = () => {
   const now = new Date();
@@ -109,9 +107,12 @@ export const getUserLocation = async () => {
 };
 //---------------------------------------------------------------------------------------------------------------
 export const getBusStopData = async (busStopCode, accountKey) => {
-  const res = await fetch(`${BUS_ARRIVAL_URL}${busStopCode}`, {
-    headers: { AccountKey: accountKey },
-  });
+  const res = await fetch(
+    `${import.meta.env.VITE_BUSARRIVAL_URL}${busStopCode}`,
+    {
+      headers: { AccountKey: accountKey },
+    },
+  );
 
   if (!res.ok) {
     throw new Error("cannot fetch, check url or connection");
@@ -147,9 +148,12 @@ export const getBusStopDetails = (
 export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
   // Create an array of Promises immediately
   const stopRequests = nearbyStops.map(async (stop) => {
-    const res = await fetch(`${BUS_ARRIVAL_URL}${stop.code}`, {
-      headers: { AccountKey: accountKey },
-    });
+    const res = await fetch(
+      `${import.meta.env.VITE_BUSARRIVAL_URL}${stop.code}`,
+      {
+        headers: { AccountKey: accountKey },
+      },
+    );
 
     if (!res.ok) {
       throw new Error("Failed to fetch arrival data for stop: " + stop.code);
@@ -195,7 +199,7 @@ export const getStoredBusStopData = async (
     const code = storedStop.busCode;
     const details = getBusStopDetails(code, allStopsData, userLat, userLon);
 
-    const res = await fetch(`${BUS_ARRIVAL_URL}${code}`, {
+    const res = await fetch(`${import.meta.env.VITE_BUSARRIVAL_URL}${code}`, {
       headers: { AccountKey: accountKey },
     });
 

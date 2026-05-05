@@ -64,43 +64,60 @@ const DashBoard = () => {
   //------------------------------------RETURN------------------------------------------------
 
   return (
-    <div>
-      <h1>DASHBOARD</h1>
-      <br />
-      <button onClick={() => setShowModal(true)}>Open Modal</button>
+    <div className="max-w-6xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-4">
+      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+        DASHBOARD
+      </h1>
+      <button
+        onClick={() => setShowModal(true)}
+        className="px-4 py-2 rounded-md bg-blue-600 text-white text-sm sm:text-base hover:bg-blue-700"
+      >
+        ADD BUS STOP
+      </button>
       {showModal && <DashBoardModal setShowModal={setShowModal} />}
-      <br />
-      {` ================================================================= `}
-      <br />
-      <button onClick={() => userLocationQuery.refetch()}>
+      <hr className="border-gray-300" />
+      <button
+        onClick={() => userLocationQuery.refetch()}
+        className="px-4 py-2 rounded-md bg-slate-700 text-white text-sm sm:text-base hover:bg-slate-800"
+      >
         Fetch user Location
       </button>
-      {userLocationQuery.isLoading && <p>Getting user Location</p>}
-      <br />
-      {`This is Your Location:`}
-      <br />
+      {userLocationQuery.isLoading && (
+        <p className="text-sm">Getting user Location</p>
+      )}
+      <p className="text-sm sm:text-base font-medium">This is Your Location:</p>
       {userLocationQuery.isSuccess && userLocationQuery.data ? (
-        <p>{`Lat: ${userLocationQuery.data.latitude}, Long: ${userLocationQuery.data.longitude}`}</p>
+        <p className="text-sm sm:text-base">{`Lat: ${userLocationQuery.data.latitude}, Long: ${userLocationQuery.data.longitude}`}</p>
       ) : (
-        <p>
+        <p className="text-sm sm:text-base text-gray-700">
           location not ON, using fallback location Plaza Singapura (lat:1.3,
           lon=103.84)
         </p>
       )}
-      <br />
-      {` ================================================================= `}
-      <br />
-      <button onClick={() => storedStopQuery.refetch()}>
+      <hr className="border-gray-300" />
+      <button
+        onClick={() => storedStopQuery.refetch()}
+        className="px-4 py-2 rounded-md bg-slate-700 text-white text-sm sm:text-base hover:bg-slate-800"
+      >
         Refresh Stored Bus Stop
       </button>
-      {storedBusStopQuery.isLoading && <p>Refreshing your favourites</p>}
-      <br />
+      {storedBusStopQuery.isLoading && (
+        <p className="text-sm">Refreshing your favourites</p>
+      )}
       {/* Stored Bus Stops from Airtable - mapping section */}
-      {storedStopQuery.isLoading && <h3>Loading your favourites stops...</h3>}
-      {storedStopQuery.isError && <h3>{storedStopQuery.error?.message}</h3>}
+      {storedStopQuery.isLoading && (
+        <h3 className="text-base sm:text-lg font-semibold">
+          Loading your favourites stops...
+        </h3>
+      )}
+      {storedStopQuery.isError && (
+        <h3 className="text-base sm:text-lg font-semibold text-red-600">
+          {storedStopQuery.error?.message}
+        </h3>
+      )}
       {storedStopData.length > 0 && (
-        <div>
-          <h3>Stored Bus Stops</h3>
+        <div className="space-y-3">
+          <h3 className="text-lg sm:text-xl font-semibold">Stored Bus Stops</h3>
           {storedStopData.map((stop) => (
             <BusCard
               key={stop.id || stop.code}

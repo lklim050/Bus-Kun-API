@@ -89,42 +89,46 @@ const Nearby = () => {
 
   //--------------------------------RETURN--------------------------------------------
   return (
-    <div>
-      <h1>NEARBY</h1>
-      {` ================================================================= `}
-      <br />
-      <button onClick={() => userLocationQuery.refetch()}>
+    <div className="max-w-6xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-4">
+      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">NEARBY</h1>
+      <hr className="border-gray-300" />
+      <button
+        onClick={() => userLocationQuery.refetch()}
+        className="px-4 py-2 rounded-md bg-slate-700 text-white text-sm sm:text-base hover:bg-slate-800"
+      >
         Fetch user Location
       </button>
-      <br />
-      {userLocationQuery.isLoading && <p>Getting user Location</p>}
-      <br />
-      {`This is Your Location:`}
-      <br />
+      {userLocationQuery.isLoading && (
+        <p className="text-sm">Getting user Location</p>
+      )}
+      <p className="text-sm sm:text-base font-medium">This is Your Location:</p>
       {userLocationQuery.isSuccess && userLocationQuery.data ? (
-        <p>{`Lat: ${userLocationQuery.data.latitude}, Long: ${userLocationQuery.data.longitude}`}</p>
+        <p className="text-sm sm:text-base">{`Lat: ${userLocationQuery.data.latitude}, Long: ${userLocationQuery.data.longitude}`}</p>
       ) : (
-        <p>
+        <p className="text-sm sm:text-base text-gray-700">
           location not ON, using fallback location Plaza Singapura (lat:1.3,
           lon=103.84)
         </p>
       )}
-      <br />
-      {` ================================================================= `}
-      <br />
-      <button onClick={() => nearbyBusStopQuery.refetch()}>
+      <hr className="border-gray-300" />
+      <button
+        onClick={() => nearbyBusStopQuery.refetch()}
+        className="px-4 py-2 rounded-md bg-slate-700 text-white text-sm sm:text-base hover:bg-slate-800"
+      >
         Fetch Nearby Bus Info
       </button>
-      <br />
       {/* {JSON.stringify(nearbyBusStopQuery.data)} */}
-      {nearbyBusStopQuery.isLoading && <h3>Loading...</h3>}
-      {nearbyBusStopQuery.isError && (
-        <h3>{nearbyBusStopQuery.error?.message}</h3>
+      {nearbyBusStopQuery.isLoading && (
+        <h3 className="text-base sm:text-lg font-semibold">Loading...</h3>
       )}
-      <br />
+      {nearbyBusStopQuery.isError && (
+        <h3 className="text-base sm:text-lg font-semibold text-red-600">
+          {nearbyBusStopQuery.error?.message}
+        </h3>
+      )}
       {(nearbyBusStopQuery.isSuccess || nearbyBusStopQuery.data) &&
         (nearbyBusDataEx.length > 0 ? (
-          <div>
+          <div className="space-y-3">
             {nearbyBusDataEx.map((stop) => (
               <BusCard
                 key={stop.id || stop.code}
@@ -138,8 +142,12 @@ const Nearby = () => {
             ))}
           </div>
         ) : (
-          <p>No nearby bus stops found</p>
+          <p className="text-sm sm:text-base text-gray-700">
+            No nearby bus stops found
+          </p>
         ))}
+      <br />
+      {JSON.stringify(nearbyBusDataEx)}
     </div>
   );
 };

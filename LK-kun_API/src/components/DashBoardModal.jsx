@@ -10,7 +10,6 @@ import {
   getStoredBusStopData,
 } from "../utils/busApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import styles from "./DashBoardModal.module.css";
 
 const OverLay = (props) => {
   const [input, setInput] = useState("");
@@ -101,40 +100,56 @@ const OverLay = (props) => {
       })()
     : null;
 
+  //--------------------------------------RETURN-------------------------------------------------
   return (
-    <div className={styles.backdrop}>
-      <div className={styles.modal}>
+    <div className="fixed inset-0 z-40 bg-black/70">
+      <div className="fixed inset-0 bg-white overflow-y-auto p-3 sm:p-4 sm:inset-auto sm:top-[8vh] sm:bottom-[8vh] sm:left-1/2 sm:-translate-x-1/2 sm:w-[92%] sm:max-w-4xl sm:rounded-xl">
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center mb-3">
+          <input
+            type="text"
+            name="busStopNo"
+            inputMode="numeric"
+            pattern="\d"
+            maxLength={5}
+            value={input}
+            placeholder="input bus stop no."
+            onChange={(e) => setInput(e.target.value.replace(/\D/g, ""))}
+            className="w-full sm:flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm"
+          />
+          <button
+            type="button"
+            onClick={() => busStopQuery.refetch()}
+            className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+          >
+            Search
+          </button>
+          <button
+            onClick={() => {
+              setInput("");
+              queryClient.removeQueries({ queryKey: ["busstops"] });
+              props.setShowModal(false);
+            }}
+            className="px-3 py-2 bg-gray-300 text-gray-900 rounded-md hover:bg-gray-400 text-sm"
+          >
+            Close
+          </button>
+        </div>
         <br />
-        <input
-          type="text"
-          name="busStopNo"
-          inputMode="numeric"
-          pattern="\d"
-          maxLength={5}
-          value={input}
-          placeholder="input bus stop no."
-          onChange={(e) => setInput(e.target.value.replace(/\D/g, ""))}
-        />
-        <button type="button" onClick={() => busStopQuery.refetch()}>
-          Search
-        </button>
-        <button
-          onClick={() => {
-            setInput("");
-            queryClient.removeQueries({ queryKey: ["busstops"] });
-            props.setShowModal(false);
-          }}
-        >
-          Close Modal
-        </button>
-        <br />
-        {busStopQuery.isLoading && <h3>Loading...</h3>}
-        {busStopQuery.isError && <h3>{busStopQuery.error?.message}</h3>}
-        <br />
+        {JSON.stringify(busStopDataEx2)}
+        {busStopQuery.isLoading && (
+          <h3 className="text-base sm:text-lg font-bold">Loading...</h3>
+        )}
+        {busStopQuery.isError && (
+          <h3 className="text-base sm:text-lg font-bold text-red-600">
+            {busStopQuery.error?.message}
+          </h3>
+        )}
         {(busStopQuery.isSuccess || busStopQuery.data) &&
           (busStopDataEx && busStopDataEx.services.length > 0 ? (
             <div>
-              <h3>Search Result</h3>
+              <h3 className="text-base sm:text-lg font-bold mb-2">
+                Search Result
+              </h3>
               <BusCard
                 key={busStopDataEx.id || busStopDataEx.code}
                 id={busStopDataEx.id}
@@ -146,7 +161,9 @@ const OverLay = (props) => {
               />
             </div>
           ) : (
-            <p>No bus services available for this stop</p>
+            <p className="text-gray-600 text-sm sm:text-base">
+              No bus services available for this stop
+            </p>
           ))}
       </div>
     </div>

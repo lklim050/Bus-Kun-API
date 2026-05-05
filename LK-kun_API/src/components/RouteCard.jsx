@@ -1,19 +1,23 @@
 import React from "react";
-import styles from "./RouteCard.module.css";
 
 const RouteCard = (props) => {
   return (
-    <div className={styles.routeCard}>
-      <section className="route-left">
-        <h4>{props.routeData[0]?.directionName}</h4>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <section className="bg-white border border-gray-200 rounded-lg p-3 sm:p-4">
+        <h4 className="text-base sm:text-lg font-semibold mb-2">
+          {props.routeData[0]?.directionName}
+        </h4>
         {props.routeData[0]?.stops.map((item, index) => {
           return (
-            <ul key={`dir1-${index}`}>
-              <li>
+            <ul
+              key={`dir1-${index}`}
+              className="mb-3 text-sm sm:text-base text-gray-800"
+            >
+              <li className="font-medium">
                 {item.stopCode} - {item.description}
               </li>
               {item.timing ? (
-                <span>
+                <span className="text-xs sm:text-sm text-gray-600">
                   <p>
                     {item.timing.weekdaysFirst &&
                       `Weekday: ${item.timing.weekdaysFirst} to ${item.timing.weekdaysLast}`}
@@ -29,17 +33,21 @@ const RouteCard = (props) => {
             </ul>
           );
         })}
-        <br />
       </section>
-      <section className="route-right">
-        <h4>{props.routeData[1]?.directionName}</h4>
+      <section className="bg-white border border-gray-200 rounded-lg p-3 sm:p-4">
+        <h4 className="text-base sm:text-lg font-semibold mb-2">
+          {props.routeData[1]?.directionName}
+        </h4>
         {props.routeData[1]?.stops.map((item, index) => {
           return (
-            <ul key={`dir2-${index}`}>
-              <li>
+            <ul
+              key={`dir2-${index}`}
+              className="mb-3 text-sm sm:text-base text-gray-800"
+            >
+              <li className="font-medium">
                 {item.stopCode} - {item.description}
               </li>
-              <span>
+              <span className="text-xs sm:text-sm text-gray-600">
                 <p>
                   {item.timing.weekdaysFirst &&
                     `Weekday: ${item.timing.weekdaysFirst} to ${item.timing.weekdaysLast}`}
@@ -52,7 +60,6 @@ const RouteCard = (props) => {
             </ul>
           );
         })}
-        <br />
       </section>
     </div>
   );
