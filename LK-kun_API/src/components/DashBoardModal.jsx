@@ -135,7 +135,6 @@ const OverLay = (props) => {
           </button>
         </div>
         <br />
-        {JSON.stringify(busStopDataEx2)}
         {busStopQuery.isLoading && (
           <h3 className="text-base sm:text-lg font-bold">Loading...</h3>
         )}

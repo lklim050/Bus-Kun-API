@@ -117,7 +117,6 @@ const DashBoard = () => {
       )}
       {storedStopData.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-lg sm:text-xl font-semibold">Stored Bus Stops</h3>
           {storedStopData.map((stop) => (
             <BusCard
               key={stop.id || stop.code}

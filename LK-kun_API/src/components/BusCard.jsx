@@ -90,7 +90,7 @@ const BusCard = (props) => {
 
   return (
     <div className="mx-auto w-full max-w-2xl border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50 shadow-sm flex flex-col md:flex-row gap-4 box-border overflow-hidden">
-      <div className="flex flex-col gap-2 pb-4 md:pb-0 md:pr-4 border-b md:border-b-0 md:border-r border-gray-200 md:w-48 shrink-0">
+      <div className="flex flex-col gap-2 pb-4 md:pb-0 md:pr-4 border-b md:border-b-0 md:border-r border-gray-200 md:w-36 shrink-0">
         <h4 className="m-0 text-lg font-bold text-black uppercase tracking-tight">
           {props.code}
         </h4>
@@ -130,7 +130,7 @@ const BusCard = (props) => {
       <div className="flex-1 min-w-0">
         {sortedServices.length > 0 ? (
           /* grid-cols-2 on small tablets, grid-cols-1 on phones */
-          <ul className="list-none p-0 m-0 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <ul className="list-none p-0 m-0 flex flex-wrap gap-3">
             {sortedServices.map((item, index) => {
               const nextBuses = [
                 item.NextBus,
@@ -161,7 +161,7 @@ const BusCard = (props) => {
                           </span>
                           <span
                             className={`font-bold ${
-                              bus.Load === "SDA"
+                              bus.Load === "SEA"
                                 ? "text-green-600"
                                 : bus.Load === "LSD"
                                   ? "text-orange-500"
