@@ -89,29 +89,33 @@ const BusCard = (props) => {
     : [];
 
   return (
-    <div className="border border-gray-200 rounded-xl p-3 mb-3 bg-gray-50 shadow-sm flex flex-col items-stretch gap-3 w-full box-border">
-      <div className="flex flex-col gap-1.5 mb-0 pb-3 border-b border-gray-200 self-start">
-        <h4 className="m-0 text-base font-bold text-black">{props.code}</h4>
-        <p className="m-0 text-sm text-gray-700 whitespace-normal break-words">
+    <div className="mx-auto w-full max-w-2xl border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50 shadow-sm flex flex-col md:flex-row gap-4 box-border overflow-hidden">
+      <div className="flex flex-col gap-2 pb-4 md:pb-0 md:pr-4 border-b md:border-b-0 md:border-r border-gray-200 md:w-48 shrink-0">
+        <h4 className="m-0 text-lg font-bold text-black uppercase tracking-tight">
+          {props.code}
+        </h4>
+        <p className="m-0 text-sm text-gray-700 leading-snug">
           {props.description1}
         </p>
-        <span className="text-xs text-gray-600 font-medium">
+        <span className="text-xs text-gray-500 font-medium">
           {distanceText}
         </span>
+
         <button
           onClick={handleToggleFavorite}
           disabled={addDeleteMutation.isLoading}
-          className="px-3 py-1.5 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-100 disabled:opacity-50 w-fit"
+          className="mt-2 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-semibold hover:bg-gray-100 active:scale-95 transition-all disabled:opacity-50 w-full md:w-fit"
         >
           {addDeleteMutation.isLoading
             ? "..."
             : isFavorited
               ? "❤️ Saved"
-              : "🤍 Not Saved"}
+              : "🤍 Save"}
         </button>
+
         {toast && (
           <div
-            className={`text-xs p-2 rounded-md ${
+            className={`mt-2 text-xs p-2 rounded-md animate-pulse ${
               toast.type === "error"
                 ? "bg-red-100 text-red-700"
                 : "bg-green-100 text-green-700"
@@ -122,9 +126,11 @@ const BusCard = (props) => {
         )}
       </div>
 
-      {sortedServices.length > 0 ? (
-        <div className="flex-1 min-w-0">
-          <ul className="list-none p-0 m-0 grid grid-cols-1 gap-2">
+      {/* RIGHT/BOTTOM SECTION: Bus Services */}
+      <div className="flex-1 min-w-0">
+        {sortedServices.length > 0 ? (
+          /* grid-cols-2 on small tablets, grid-cols-1 on phones */
+          <ul className="list-none p-0 m-0 grid grid-cols-1 sm:grid-cols-2 gap-3">
             {sortedServices.map((item, index) => {
               const nextBuses = [
                 item.NextBus,
@@ -135,24 +141,40 @@ const BusCard = (props) => {
               return (
                 <li
                   key={`${props.code}-${item.ServiceNo}-${index}`}
-                  className="flex flex-row items-start gap-2 p-2.5 bg-white border-l-4 border-blue-600 rounded-md text-xs min-w-0"
+                  className="flex flex-col gap-2 p-3 bg-white border border-gray-100 border-l-4 border-l-blue-600 rounded-lg shadow-sm"
                 >
-                  <span className="font-bold text-gray-900">
-                    {item.ServiceNo}
-                  </span>
-                  <div className="flex flex-col items-start gap-1 w-full min-w-0">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-bold text-blue-800 bg-blue-50 px-2 py-0.5 rounded">
+                      {item.ServiceNo}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col gap-1">
                     {nextBuses.length > 0 ? (
                       nextBuses.map((bus, busIndex) => (
-                        <span
-                          key={`${props.code}-${item.ServiceNo}-${busIndex}`}
-                          className="text-green-600 font-medium text-left leading-relaxed break-words"
+                        <div
+                          key={busIndex}
+                          className="flex justify-between text-xs"
                         >
-                          {formatArrival(bus)} ({bus.Load})
-                        </span>
+                          <span className="text-gray-900 font-medium">
+                            {formatArrival(bus)}
+                          </span>
+                          <span
+                            className={`font-bold ${
+                              bus.Load === "SDA"
+                                ? "text-green-600"
+                                : bus.Load === "LSD"
+                                  ? "text-orange-500"
+                                  : "text-red-600"
+                            }`}
+                          >
+                            {bus.Load}
+                          </span>
+                        </div>
                       ))
                     ) : (
-                      <span className="text-green-600 font-medium text-left leading-relaxed break-words">
-                        No next bus data
+                      <span className="text-gray-400 italic text-xs">
+                        No data
                       </span>
                     )}
                   </div>
@@ -160,12 +182,12 @@ const BusCard = (props) => {
               );
             })}
           </ul>
-        </div>
-      ) : (
-        <p className="text-gray-600 text-sm">
-          No bus services available for this stop
-        </p>
-      )}
+        ) : (
+          <p className="text-gray-500 text-sm italic py-4">
+            No services found.
+          </p>
+        )}
+      </div>
     </div>
   );
 };
