@@ -145,7 +145,7 @@ export const getBusStopDetails = (
 };
 //---------------------------------------------------------------------------------------------------------------
 export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
-  // 1. Create an array of Promises immediately
+  // Create an array of Promises immediately
   const stopRequests = nearbyStops.map(async (stop) => {
     const res = await fetch(`${BUS_ARRIVAL_URL}${stop.code}`, {
       headers: { AccountKey: accountKey },
@@ -164,7 +164,7 @@ export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
     };
   });
 
-  // 2. Wait for all fetches to resolve in parallel
+  // Ensure only when all fetches to be resolved before return
   return Promise.all(stopRequests);
 };
 
