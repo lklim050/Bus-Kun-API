@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  findNearbyStops as getNearbyStops,
+  findNearbyStops,
   formatArrival,
   getAllBusStop,
   getBusStopData,
@@ -37,17 +37,18 @@ const Nearby = () => {
 
   //----------------------------CHECK NEARBY BUS-----------------------------------
 
+  //get from static file
   const allBusStopQuery = useQuery({
     queryKey: ["allBusStop"],
     queryFn: getAllBusStop,
   });
 
-  function findNearbyStops(lat = 1.3, lon = 103.84, radiusKm = 0.4) {
-    return getNearbyStops(allBusStopQuery.data, lat, lon, radiusKm);
+  function getNearbyStops(lat = 1.3, lon = 103.84, radiusKm = 0.4) {
+    return findNearbyStops(allBusStopQuery.data, lat, lon, radiusKm);
   }
 
   //----------------GET/MAP NEARBY BUS STOP INFORMATION-------------------------------
-  const nearbyBusStopArray = findNearbyStops(
+  const nearbyBusStopArray = getNearbyStops(
     userLocationQuery.data?.latitude,
     userLocationQuery.data?.longitude,
   ).map((stop) => ({ ...stop }));

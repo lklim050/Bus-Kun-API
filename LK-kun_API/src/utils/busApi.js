@@ -59,28 +59,6 @@ export const getAllBusStop = async () => {
   }
   return res.json();
 };
-//-------------------------FORMAT AIRTABLE BUS STOP RECORDS-------------------------------------
-export const mapStoredBusStopRecords = (records) => {
-  return (
-    records?.map((record) => ({
-      id: record.id,
-      busCode: record.fields?.BusCodeStored || "N/A",
-      type: record.fields?.Type || "unknown",
-    })) ?? []
-  );
-};
-//-------------------------MERGE SAVED STOP INFO INTO SEARCH RESULT-----------------------------
-export const mergeStoredBusStopInfo = (busStopData, storedBusStopData) => {
-  if (!busStopData || !Array.isArray(storedBusStopData)) return busStopData;
-
-  const found = storedBusStopData.find(
-    (storedStop) => String(storedStop.busCode) === String(busStopData.code),
-  );
-
-  return found
-    ? { ...busStopData, id: found.id, type: found.type }
-    : busStopData;
-};
 //-------------------------RETURN NEARBY BUS CODES WITH REF TO USER LOCATION -------------------------------------
 export const findNearbyStops = (
   allBusStops,
@@ -189,29 +167,6 @@ export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
   // 2. Wait for all fetches to resolve in parallel
   return Promise.all(stopRequests);
 };
-
-// // this is the old for loop functions TBD
-// export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
-//   const nearbyStopsWithServices = [];
-
-//   for (let i = 0; i < nearbyStops.length; i++) {
-//     const res = await fetch(`${BUS_ARRIVAL_URL}${nearbyStops[i].code}`, {
-//       headers: { AccountKey: accountKey },
-//     });
-
-//     if (!res.ok) {
-//       throw new Error("cannot fetch bus data, please check url or location");
-//     }
-
-//     const data = await res.json();
-//     nearbyStopsWithServices.push({
-//       ...nearbyStops[i],
-//       services: data?.Services ?? [],
-//     });
-//   }
-
-//   return nearbyStopsWithServices;
-// };
 
 //---------------------------------------------------------------------------------------------------------------
 export const getStoredBusStop = async () => {

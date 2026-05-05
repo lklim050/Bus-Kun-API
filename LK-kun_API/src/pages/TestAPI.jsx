@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import {
   findNearbyStops as getNearbyStops,
@@ -16,7 +16,6 @@ import {
 
 const TestAPI = () => {
   const [input, setInput] = useState("");
-  //   const queryClient = useQueryClient();
   const url = "/ltaodataservice/v3/BusArrival?BusStopCode=";
   const selectBusStopNo = "64029";
   //------------------GET STORED BUS STOP DATA (AIRTABLE)---------------------------
