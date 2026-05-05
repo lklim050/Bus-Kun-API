@@ -1,41 +1,79 @@
 import React from "react";
-import { Link, useLocation } from "react-router";
+import { NavLink } from "react-router";
 import styles from "./Navbar.module.css";
 
 const Navbar = () => {
-  const location = useLocation();
-
   return (
     <nav className={styles.bottomNavbar}>
-      <Link
+      <NavLink
         to="/"
-        className={`${styles.navLink} ${location.pathname === "/" ? styles.active : ""}`}
+        className={({ isActive }) =>
+          `${styles.navLink} ${isActive ? styles.active : ""}`
+        }
       >
-        <span className={styles.navIcon}>📊</span>
-        <span className={styles.navLabel}>Dashboard</span>
-      </Link>
-      <Link
+        {({ isActive }) => (
+          <>
+            <span
+              className={`${styles.navIcon} ${isActive ? styles.activeIcon : ""}`}
+            >
+              📊
+            </span>
+            <span className={styles.navLabel}>Dashboard</span>
+          </>
+        )}
+      </NavLink>
+      <NavLink
         to="/nearby"
-        className={`${styles.navLink} ${location.pathname === "/nearby" ? styles.active : ""}`}
+        className={({ isActive }) =>
+          `${styles.navLink} ${isActive ? styles.active : ""}`
+        }
       >
-        <span className={styles.navIcon}>📍</span>
-        <span className={styles.navLabel}>Nearby</span>
-      </Link>
-      <Link
+        {({ isActive }) => (
+          <>
+            <span
+              className={`${styles.navIcon} ${isActive ? styles.activeIcon : ""}`}
+            >
+              📍
+            </span>
+            <span className={styles.navLabel}>Nearby</span>
+          </>
+        )}
+      </NavLink>
+      <NavLink
         to="/search"
-        className={`${styles.navLink} ${location.pathname === "/search" ? styles.active : ""}`}
+        className={({ isActive }) =>
+          `${styles.navLink} ${isActive ? styles.active : ""}`
+        }
       >
-        <span className={styles.navIcon}>🔎</span>
-        <span className={styles.navLabel}>Search</span>
-      </Link>
+        {({ isActive }) => (
+          <>
+            <span
+              className={`${styles.navIcon} ${isActive ? styles.activeIcon : ""}`}
+            >
+              🔎
+            </span>
+            <span className={styles.navLabel}>Search</span>
+          </>
+        )}
+      </NavLink>
       {/*---------------------TO DELETE BEFORE SUBMISSION-----------------------------------*/}
-      <Link
+      <NavLink
         to="/test"
-        className={`${styles.navLink} ${location.pathname === "/test" ? styles.active : ""}`}
+        className={({ isActive }) =>
+          `${styles.navLink} ${isActive ? styles.active : ""}`
+        }
       >
-        <span className={styles.navIcon}>📋</span>
-        <span className={styles.navLabel}>Test</span>
-      </Link>
+        {({ isActive }) => (
+          <>
+            <span
+              className={`${styles.navIcon} ${isActive ? styles.activeIcon : ""}`}
+            >
+              📋
+            </span>
+            <span className={styles.navLabel}>Test</span>
+          </>
+        )}
+      </NavLink>
       {/*---------------------TO DELETE BEFORE SUBMISSION-----------------------------------*/}
     </nav>
   );
