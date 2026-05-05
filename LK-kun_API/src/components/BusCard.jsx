@@ -90,17 +90,19 @@ const BusCard = (props) => {
 
   return (
     <div className="mx-auto w-full max-w-2xl border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50 shadow-sm flex flex-col md:flex-row gap-4 box-border overflow-hidden">
-      <div className="flex flex-col gap-2 pb-4 md:pb-0 md:pr-4 border-b md:border-b-0 md:border-r border-gray-200 md:w-36 shrink-0">
-        <h4 className="m-0 text-lg font-bold text-black uppercase tracking-tight">
-          {props.code}
+      <div className="flex flex-col sm:flex-col gap-2 pb-4 md:pb-0 md:pr-4 border-b md:border-b-0 md:border-r border-gray-200 md:w-36 shrink-0">
+        <h4 className="flex sm:flex-col m-0 text-lg font-bold text-black uppercase tracking-tight">
+          {props.code} - {props.description1}{" "}
+          <span className="flex sm:flex-col text-base mx-auto text-gray-500">
+            {distanceText}
+          </span>
         </h4>
-        <p className="m-0 text-sm text-gray-700 leading-snug">
+        {/* <p className="flex m-0 text-sm text-gray-700 leading-snug">
           {props.description1}
         </p>
-        <span className="text-xs text-gray-500 font-medium">
+        <span className="flex text-xs text-gray-500 font-medium">
           {distanceText}
-        </span>
-
+        </span> */}
         <button
           onClick={handleToggleFavorite}
           disabled={addDeleteMutation.isLoading}

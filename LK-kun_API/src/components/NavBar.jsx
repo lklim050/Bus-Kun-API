@@ -5,7 +5,7 @@ const Navbar = () => {
   const getLinkClass = ({ isActive }) =>
     `flex-1 flex flex-col items-center justify-center px-2 py-2 sm:px-3 sm:py-3 text-gray-600 no-underline transition-all duration-300 rounded-t-lg ${
       isActive
-        ? "text-blue-600 bg-blue-50"
+        ? "text-blue-700 bg-sky-200"
         : "hover:bg-blue-100 hover:text-gray-900"
     }`;
 
@@ -60,7 +60,7 @@ const Navbar = () => {
         )}
       </NavLink>
       {/*---------------------TO DELETE BEFORE SUBMISSION-----------------------------------*/}
-      <NavLink to="/test" className={getLinkClass}>
+      {/* <NavLink to="/test" className={getLinkClass}>
         {({ isActive }) => (
           <>
             <span
@@ -75,7 +75,7 @@ const Navbar = () => {
             </span>
           </>
         )}
-      </NavLink>
+      </NavLink> */}
       {/*---------------------TO DELETE BEFORE SUBMISSION-----------------------------------*/}
     </nav>
   );
