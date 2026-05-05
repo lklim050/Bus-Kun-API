@@ -105,6 +105,16 @@ const OverLay = (props) => {
     <div className="fixed inset-0 z-40 bg-black/70">
       <div className="fixed inset-0 bg-white overflow-y-auto p-3 sm:p-4 sm:inset-auto sm:top-[8vh] sm:bottom-[8vh] sm:left-1/2 sm:-translate-x-1/2 sm:w-[92%] sm:max-w-4xl sm:rounded-xl">
         <div className="flex flex-col sm:flex-row gap-2 sm:items-center mb-3">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            ADD BUS STOP HERE
+          </h1>
+          <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 p-3 rounded-lg">
+            <span className="text-blue-600 text-lg">💡</span>
+            <p className="my-auto text-sm text-blue-800">
+              <span className="font-semibold">Tips:</span> Enter 5-digits bus
+              stop number. Example: 08111 - Winsland Hse
+            </p>
+          </div>
           <input
             type="text"
             name="busStopNo"

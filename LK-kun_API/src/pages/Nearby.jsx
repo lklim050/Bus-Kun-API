@@ -101,7 +101,6 @@ const Nearby = () => {
       {userLocationQuery.isLoading && (
         <p className="text-sm">Getting user Location</p>
       )}
-      <p className="text-sm sm:text-base font-medium">This is Your Location:</p>
       {userLocationQuery.isSuccess && userLocationQuery.data ? (
         <p className="text-sm sm:text-base">{`Lat: ${userLocationQuery.data.latitude}, Long: ${userLocationQuery.data.longitude}`}</p>
       ) : (
@@ -117,7 +116,6 @@ const Nearby = () => {
       >
         Fetch Nearby Bus Info
       </button>
-      {/* {JSON.stringify(nearbyBusStopQuery.data)} */}
       {nearbyBusStopQuery.isLoading && (
         <h3 className="text-base sm:text-lg font-semibold">Loading...</h3>
       )}
@@ -147,7 +145,6 @@ const Nearby = () => {
           </p>
         ))}
       <br />
-      {JSON.stringify(nearbyBusDataEx)}
     </div>
   );
 };
