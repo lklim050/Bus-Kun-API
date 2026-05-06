@@ -1,21 +1,21 @@
 export const sampleStatus2 = {
-  Status: 2,
+  Status: 3,
   AffectedSegments: [
     {
       Line: "CCL",
-      Direction: "Both",
+      Direction: "Harbourfront",
       Stations: "CC1,CC2,CC3,CC4,CC5",
-      FreePublicBus: "All services",
-      FreeMRTShuttle: "Available",
-      MRTShuttleDirection: "Both",
+      FreePublicBus: "CC1,CC2,CC3,CC4,CC5",
+      FreeMRTShuttle: "CC1,CC2,CC3,CC4,CC5",
+      MRTShuttleDirection: "Harbourfront",
     },
     {
       Line: "EWL",
-      Direction: "Both",
+      Direction: "Pasir Ris",
       Stations: "EW1,EW2,EW3,EW4,EW5",
-      FreePublicBus: "Available at designated bus stops",
-      FreeMRTShuttle: "Available",
-      MRTShuttleDirection: "Both",
+      FreePublicBus: "EW1,EW2,EW3,EW4,EW5",
+      FreeMRTShuttle: "EW1,EW2,EW3,EW4,EW5",
+      MRTShuttleDirection: "Pasir Ris",
     },
   ],
   Message: [

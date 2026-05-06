@@ -1,18 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import RouteCard from "../components/RouteCard";
 import { fetchLtaData } from "../utils/busApi";
+import { useSearchParams } from "react-router";
 
 const Search = () => {
   const [input, setInput] = useState("");
   const [activeTab, setActiveTab] = useState("route");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const busNoFromUrl = searchParams.get(`busNo`) || "";
+
   const ltaDataQuery = useQuery({
     queryKey: ["ltadata"],
     queryFn: () => fetchLtaData(input),
     enabled: false,
     retry: 1,
   });
+
+  useEffect;
+  useEffect(() => {
+    setInput(busNoFromUrl);
+    ltaDataQuery.refetch();
+  }, [busNoFromUrl]);
 
   const routeData = ltaDataQuery.data ? [...ltaDataQuery.data] : [];
 

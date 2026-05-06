@@ -5,10 +5,13 @@ import {
   getAllBusStop,
   getStoredBusStop,
   getStoredBusStopData,
+  getLtaAlert,
+  sampleStatus2,
 } from "../utils/busApi";
 import BusCard from "../components/BusCard";
 import DashBoardModal from "../components/DashBoardModal";
 import AlertModal from "../components/AlertModal";
+import { useEffect } from "react";
 
 const DashBoard = () => {
   const [showModal, setShowModal] = useState(false);
@@ -64,6 +67,37 @@ const DashBoard = () => {
     ? [...storedStopQuery.data].sort((a, b) => a.distanceKm - b.distanceKm)
     : [];
 
+  //----------------------- GET LTA Alert------------------------------------
+  const ltaAlertQuery = useQuery({
+    queryKey: ["alerts"],
+    queryFn: getLtaAlert,
+    enabled: true,
+    staleTime: 300_000,
+    // onSuccess: () => {
+    //   if (alertStatus === 2) {
+    //     setAlertStatus(2);
+    //   } else {
+    //     setAlertStatus(1);
+    //   }
+    // },
+  });
+
+  // const ltaAlert = ltaAlertQuery.data?.value ?? null;
+
+  // this is sample data for demo
+  const ltaAlert = sampleStatus2;
+
+  useEffect(() => {
+    if (!ltaAlert) return;
+    if (ltaAlert.Status === 2) {
+      setAlertStatus(2);
+    } else if (ltaAlert.Status === 3) {
+      setAlertStatus(3);
+    } else {
+      setAlertStatus(1);
+    }
+  }, [ltaAlert]);
+
   //------------------------------------RETURN------------------------------------------------
 
   return (
@@ -81,7 +115,7 @@ const DashBoard = () => {
         </button>{" "}
         <button
           onClick={() => setAlertModal(true)}
-          className={`px-4 py-2 rounded-md text-white text-sm sm:text-base hover:bg-blue-700 ${alertStatus === 2 ? "bg-red-500 animate-pulse" : "bg-blue-600"}`}
+          className={`px-4 py-2 rounded-md text-white text-sm sm:text-base hover:bg-blue-700 ${alertStatus === 2 || 3 ? "bg-red-500 animate-pulse" : "bg-blue-600"}`}
         >
           ALERT
         </button>
@@ -90,6 +124,9 @@ const DashBoard = () => {
           <AlertModal
             setAlertModal={setAlertModal}
             setAlertStatus={setAlertStatus}
+            status={ltaAlert.Status}
+            affected={ltaAlert.AffectedSegments}
+            message={ltaAlert.Message}
           />
         )}
         <button
@@ -99,8 +136,18 @@ const DashBoard = () => {
           Refresh Location
         </button>
       </div>
+
       {userLocationQuery.isLoading && (
         <p className="text-sm">Getting user Location</p>
+      )}
+      {ltaAlertQuery.isLoading && (
+        <p className="text-sm text-gray-700">Loading alerts...</p>
+      )}
+
+      {ltaAlertQuery.isError && (
+        <p className="text-sm text-red-600">
+          Failed to load alerts. Please check connection or try again later.
+        </p>
       )}
       {alertStatus === 2 ? (
         <p className="bg-red-500 text-olive-200">TRAIN DISRUPTION ALERT!!!!</p>

@@ -308,7 +308,7 @@ const TestAPI = () => {
       <div className="break-all">
         {ltaAlertQuery.isLoading && <p>Fetching LTA DATA...</p>}
         {ltaAlertQuery.isError && <p>{ltaAlertQuery.error.message}</p>}
-        {JSON.stringify(ltaAlert)}
+        {JSON.stringify(ltaAlertQuery)}
       </div>
       <br />
       <br />

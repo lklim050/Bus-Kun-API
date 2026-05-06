@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { formatArrival } from "../utils/busApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router";
 
 const BusCard = (props) => {
   if (!props.stop) return null;
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const [isFavorited, setIsFavorited] = useState(Boolean(props.id));
   const [storedId, setStoredId] = useState(props.id || null);
@@ -88,6 +90,11 @@ const BusCard = (props) => {
       )
     : [];
 
+  const clickBusNo = (e, busNo) => {
+    e.stopPropagation();
+    navigate(`/search?busNo=${busNo}`);
+  };
+
   return (
     <div className="mx-auto w-full max-w-2xl border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50 shadow-sm flex flex-col md:flex-row gap-4 box-border overflow-hidden">
       <div className="flex flex-col sm:flex-col gap-2 pb-4 md:pb-0 md:pr-4 border-b md:border-b-0 md:border-r border-gray-200 md:w-36 shrink-0">
@@ -97,12 +104,6 @@ const BusCard = (props) => {
             {distanceText}
           </span>
         </h4>
-        {/* <p className="flex m-0 text-sm text-gray-700 leading-snug">
-          {props.description1}
-        </p>
-        <span className="flex text-xs text-gray-500 font-medium">
-          {distanceText}
-        </span> */}
         <button
           onClick={handleToggleFavorite}
           disabled={addDeleteMutation.isLoading}
@@ -141,9 +142,10 @@ const BusCard = (props) => {
               ].filter(Boolean);
 
               return (
-                <li
+                <button
                   key={`${props.code}-${item.ServiceNo}-${index}`}
                   className="flex flex-col gap-2 p-3 bg-white border border-gray-100 border-l-4 border-l-blue-600 rounded-lg shadow-sm"
+                  onClick={(e) => clickBusNo(e, item.ServiceNo)}
                 >
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-bold text-blue-800 bg-blue-50 px-2 py-0.5 rounded">
@@ -180,7 +182,7 @@ const BusCard = (props) => {
                       </span>
                     )}
                   </div>
-                </li>
+                </button>
               );
             })}
           </ul>
