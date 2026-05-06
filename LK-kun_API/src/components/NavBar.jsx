@@ -60,7 +60,7 @@ const Navbar = () => {
         )}
       </NavLink>
       {/*---------------------TO DELETE BEFORE SUBMISSION-----------------------------------*/}
-      {/* <NavLink to="/test" className={getLinkClass}>
+      <NavLink to="/test" className={getLinkClass}>
         {({ isActive }) => (
           <>
             <span
@@ -75,7 +75,7 @@ const Navbar = () => {
             </span>
           </>
         )}
-      </NavLink> */}
+      </NavLink>
       {/*---------------------TO DELETE BEFORE SUBMISSION-----------------------------------*/}
     </nav>
   );

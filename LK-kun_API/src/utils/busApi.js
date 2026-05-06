@@ -55,7 +55,7 @@ export const getAllBusStop = async () => {
   if (!res.ok) {
     throw new Error("cannot find local data - stops.json");
   }
-  return res.json();
+  return await res.json();
 };
 //-------------------------RETURN NEARBY BUS CODES WITH REF TO USER LOCATION -------------------------------------
 export const findNearbyStops = (
@@ -118,7 +118,7 @@ export const getBusStopData = async (busStopCode, accountKey) => {
     throw new Error("cannot fetch, check url or connection");
   }
 
-  return res.json();
+  return await res.json();
 };
 //---------------------------------------------------------------------------------------------------------------
 export const getBusStopDetails = (
@@ -278,4 +278,15 @@ export const fetchLtaData = async (busCode) => {
     };
   });
 };
-//---------------------------------------------------------------------------------------------------------------
+//----------------------------GET ALERT ------------------------------------------------
+
+export const getLtaAlert = async (accountKey) => {
+  const res = await fetch(import.meta.env.VITE_ALERT_URL, {
+    headers: { AccountKey: accountKey },
+  });
+
+  if (!res.ok) {
+    throw new Error("cannot get alert, check url or connection");
+  }
+  return res.json();
+};

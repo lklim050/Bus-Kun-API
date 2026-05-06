@@ -10,6 +10,7 @@ import {
   nowSGTime,
   getStoredBusStop,
   fetchLtaData,
+  getLtaAlert,
 } from "../utils/busApi";
 
 // const urltest = "/ltaodataservice/v3/BusArrival?BusStopCode=83139&ServiceNo=15";
@@ -99,86 +100,21 @@ const TestAPI = () => {
 
   //-----------------------GET FROM LTA.GOV.SG----------------------------------------
 
-  // const fetchDataFromLTA = async (busCode) => {
-  //   const res = await fetch(`/map/busService/bus_route_xml/${busCode}.xml`);
-
-  //   if (!res.ok) {
-  //     throw new Error("cannot fetch from lta.gov.sg");
-  //   }
-
-  //   const convertXMLtoText = await res.text();
-  //   const parser = new DOMParser();
-  //   const xmlDoc = parser.parseFromString(convertXMLtoText, "text/xml");
-
-  //   // 1. Target all <busstop> elements
-  //   const busStops = xmlDoc.getElementsByTagName("busstop");
-
-  //   return Array.from(busStops).map((stop) => {
-  //     // 2. Helper function to get text from nested tags safely
-  //     const getNestedText = (parent, selectors) => {
-  //       let element = parent;
-  //       for (const s of selectors) {
-  //         element = element?.getElementsByTagName(s)[0];
-  //       }
-  //       return element?.textContent || "";
-  //     };
-
-  //     return {
-  //       stopCode: stop.getAttribute("name"), // 65009
-  //       isWab: stop.getAttribute("wab") === "true", // Wheelchair accessible
-  //       description: stop.getElementsByTagName("details")[0]?.textContent,
-
-  //       // 3. Reaching deep into the operating hours
-  //       timing: {
-  //         weekdayFirst: getNestedText(stop, ["weekdays", "first"]),
-  //         weekdayLast: getNestedText(stop, ["weekdays", "last"]),
-  //         satFirst: getNestedText(stop, ["saturdays", "first"]),
-  //         satLast: getNestedText(stop, ["saturdays", "last"]),
-  //         sunFirst: getNestedText(stop, ["sundays", "first"]),
-  //         sunLast: getNestedText(stop, ["sundays", "last"]),
-  //       },
-  //     };
-  //   });
-  // };
-
-  // const fetchDataFromLTA = async (busCode) => {
-  //   const res = await fetch(`/map/busService/bus_route_xml/${busCode}.xml`);
-
-  //   if (!res.ok) {
-  //     throw new Error("cannot fetch from lta.gov.sg");
-  //   }
-
-  //   const convertXMLtoText = await res.text(); //from raw data (even though it is xml) to string,
-  //   const parser = new DOMParser(); // create a Parser Engine from class
-  //   const xmlDoc = parser.parseFromString(convertXMLtoText, "text/xml"); // convert back to DOM
-
-  //   // 1. Target the <direction> tags first
-  //   const directions = xmlDoc.getElementsByTagName("direction");
-
-  //   return Array.from(directions).map((dir) => {
-  //     // 2. Inside each direction, find all its child <busstop> tags
-  //     const stops = dir.getElementsByTagName("busstop");
-
-  //     return {
-  //       directionName: dir.getAttribute("name"), // "From Punggol Int to Yishun Int"
-
-  //       // 3. Nest the array of stops inside this direction object
-  //       stops: Array.from(stops).map((stop) => ({
-  //         stopCode: stop.getAttribute("name"),
-  //         description: stop.getElementsByTagName("details")[0]?.textContent,
-  //         // Reach into operating hours for each stop
-  //         firstBus: stop.getElementsByTagName("first")[0]?.textContent,
-  //         lastBus: stop.getElementsByTagName("last")[0]?.textContent,
-  //       })),
-  //     };
-  //   });
-  // };
-
-  const LtaDataQuery = useQuery({
+  const ltaDataQuery = useQuery({
     queryKey: ["ltadata"],
     queryFn: () => fetchLtaData(input),
     enabled: false,
   });
+
+  //----------------------------GET ALERT ------------------------------------------------
+
+  const ltaAlertQuery = useQuery({
+    queryKey: ["alerts"],
+    queryFn: () => getLtaAlert(import.meta.env.VITE_ACCKEY),
+    enabled: false,
+  });
+
+  const ltaAlert = ltaAlertQuery.data?.value ?? [];
 
   //--------------------------------RETURN--------------------------------------------
   return (
@@ -190,7 +126,11 @@ const TestAPI = () => {
 
       {`------------ get user location with navigator.geolocation------------------------ `}
       <br />
-      <button onClick={() => userLocationQuery.refetch()}>
+      <button
+        className="px-5 py-2.5 bg-lime-500 text-white font-semibold rounded-lg 
+                   hover:bg-green-600 active:scale-95 transition-all shadow-sm"
+        onClick={() => userLocationQuery.refetch()}
+      >
         Fetch user Location
       </button>
       <br />
@@ -235,7 +175,13 @@ const TestAPI = () => {
       <br />
       {`----------- get bus stop information with GET from ltaodataservice------------- `}
       <br />
-      <button onClick={() => busStopQuery.refetch()}>Fetch Bus Info</button>
+      <button
+        className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg 
+                   hover:bg-blue-700 active:scale-95 transition-all shadow-sm"
+        onClick={() => busStopQuery.refetch()}
+      >
+        Fetch Bus Info
+      </button>
       <br />
       {busStopQuery.isLoading && <h3>Loading...</h3>}
       {busStopQuery.isError && <h3>{busStopQuery.error?.message}</h3>}
@@ -265,7 +211,11 @@ const TestAPI = () => {
         ))}
       {`-------- get nearby bus stop information with GET from ltaodataservice---------- `}
       <br />
-      <button onClick={() => nearbyBusStopQuery.refetch()}>
+      <button
+        className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg 
+                   hover:bg-blue-700 active:scale-95 transition-all shadow-sm"
+        onClick={() => nearbyBusStopQuery.refetch()}
+      >
         Fetch Nearby Bus Info
       </button>
       <br />
@@ -332,17 +282,40 @@ const TestAPI = () => {
         placeholder="input bus no."
         onChange={(e) => setInput(e.target.value)}
       />
-      <button type="button" onClick={() => LtaDataQuery.refetch()}>
+      <button
+        className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg 
+                   hover:bg-blue-700 active:scale-95 transition-all shadow-sm"
+        type="button"
+        onClick={() => ltaDataQuery.refetch()}
+      >
         SUBMIT
       </button>
       <br />
-      {LtaDataQuery.isLoading && <p>Fetching LTA DATA...</p>}
-      {LtaDataQuery.isError && <p>{LtaDataQuery.error.message}</p>}
+      {ltaDataQuery.isLoading && <p>Fetching LTA DATA...</p>}
+      {ltaDataQuery.isError && <p>{ltaDataQuery.error.message}</p>}
       <br />
-      {LtaDataQuery.isSuccess && JSON.stringify(LtaDataQuery.data)}
+      {ltaDataQuery.isSuccess && JSON.stringify(ltaDataQuery.data)}
       <br />
       <br />
+      <button
+        className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg 
+                   hover:bg-blue-700 active:scale-95 transition-all shadow-sm"
+        type="button"
+        onClick={() => ltaAlertQuery.refetch()}
+      >
+        Fetch Alerts
+      </button>
+      <div className="break-all">
+        {ltaAlertQuery.isLoading && <p>Fetching LTA DATA...</p>}
+        {ltaAlertQuery.isError && <p>{ltaAlertQuery.error.message}</p>}
+        {JSON.stringify(ltaAlert)}
+      </div>
       <br />
+      <br />
+
+      <br />
+      <br />
+
       <br />
     </div>
   );

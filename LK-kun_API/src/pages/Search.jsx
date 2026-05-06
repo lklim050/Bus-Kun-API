@@ -7,14 +7,14 @@ import { fetchLtaData } from "../utils/busApi";
 const Search = () => {
   const [input, setInput] = useState("");
   const [activeTab, setActiveTab] = useState("route");
-  const LtaDataQuery = useQuery({
+  const ltaDataQuery = useQuery({
     queryKey: ["ltadata"],
     queryFn: () => fetchLtaData(input),
     enabled: false,
     retry: 1,
   });
 
-  const routeData = LtaDataQuery.data ? [...LtaDataQuery.data] : [];
+  const routeData = ltaDataQuery.data ? [...ltaDataQuery.data] : [];
 
   return (
     <div className="max-w-6xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-6 overflow-x-hidden">
@@ -46,7 +46,7 @@ const Search = () => {
         />
         <button
           type="button"
-          onClick={() => LtaDataQuery.refetch()}
+          onClick={() => ltaDataQuery.refetch()}
           className="bg-slate-700 text-white px-6 py-2 rounded-lg font-semibold hover:bg-slate-800 active:scale-95 transition-all w-full sm:w-auto"
         >
           SUBMIT
@@ -54,16 +54,16 @@ const Search = () => {
       </div>
 
       {/* Status Messages */}
-      {LtaDataQuery.isLoading && (
+      {ltaDataQuery.isLoading && (
         <div className="flex items-center justify-center gap-3 py-4 text-gray-600">
           <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-sm font-medium">Fetching bus route data...</p>
         </div>
       )}
 
-      {LtaDataQuery.isError && (
+      {ltaDataQuery.isError && (
         <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg text-sm">
-          {LtaDataQuery.error.message}
+          {ltaDataQuery.error.message}
         </div>
       )}
 

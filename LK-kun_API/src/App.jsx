@@ -16,7 +16,7 @@ function App() {
         <Route path="/" element={<DashBoard />} />
         <Route path="/nearby" element={<Nearby />} />
         <Route path="/search" element={<Search />} />
-        {/* <Route path="/test" element={<TestAPI />} /> */}
+        <Route path="/test" element={<TestAPI />} />
       </Routes>
       <Navbar />
     </QueryClientProvider>

@@ -8,9 +8,11 @@ import {
 } from "../utils/busApi";
 import BusCard from "../components/BusCard";
 import DashBoardModal from "../components/DashBoardModal";
+import AlertModal from "../components/AlertModal";
 
 const DashBoard = () => {
   const [showModal, setShowModal] = useState(false);
+  const [alertModal, setAlertModal] = useState(false);
 
   //----------------------------GET USER LOCATION-------------------------------------
   const userLocationQuery = useQuery({
@@ -74,8 +76,15 @@ const DashBoard = () => {
         className="px-4 py-2 rounded-md bg-blue-600 text-white text-sm sm:text-base hover:bg-blue-700"
       >
         ADD BUS STOP
+      </button>{" "}
+      <button
+        onClick={() => setAlertModal(true)}
+        className="px-4 py-2 rounded-md bg-blue-600 text-white text-sm sm:text-base hover:bg-blue-700"
+      >
+        ALERT
       </button>
       {showModal && <DashBoardModal setShowModal={setShowModal} />}
+      {alertModal && <AlertModal setAlertModal={setAlertModal} />}
       <button
         onClick={() => userLocationQuery.refetch()}
         className="px-4 py-2 rounded-md bg-slate-700 text-white text-sm sm:text-base hover:bg-slate-800"
