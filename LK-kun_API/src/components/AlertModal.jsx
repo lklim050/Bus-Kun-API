@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import { getLtaAlert } from "../utils/busApi";
 import { useQuery } from "@tanstack/react-query";
 import AlertCard from "./AlertCard";
+import { sampleStatus2 } from "../utils/busApi";
 
 const OverLay = (props) => {
   //----------------------- GET LTA Alert------------------------------------
@@ -14,33 +15,22 @@ const OverLay = (props) => {
   });
 
   // not this is an object JSON
-  const ltaAlert = ltaAlertQuery.data?.value ?? null;
+  //   const ltaAlert = ltaAlertQuery.data?.value ?? null;
 
-  if (ltaAlert.Status === 2) {
-    props.setAlertStatus(2);
-  }
+  // load sample data to alert modal (for demo)
+  const ltaAlert = sampleStatus2;
 
-  const sampleStatus2 = {
-    Status: 2,
-    AffectedSegments: [],
-    Message: [
-      {
-        Content:
-          "09:58-Due to heavy traffic entering Woodlands Checkpoint, bus services 170 and 170X are diverted from Woodlands Road to ply along Woodlands Avenue 3 and Woodlands Centre Road, in the Woodlands Checkpoint direction.",
-        CreatedDate: "2026-05-06 10:03:43",
-      },
-      {
-        Content:
-          "05:00-SK-Planned Service Adjustment. From 19 Apr to 18 Oct 2026, the Sengkang West LRT Inner Loop (i.e. direction of STC Sengkang towards SW1 Cheng Lim) will be closed. Commuters can continue to use the Sengkang West LRT Outer Loop (i.e. direction of STC Sengkang towards SW8 Renjong), peak-hours shuttle bus services, or regular bus services.",
-        CreatedDate: "2026-04-18 11:50:27",
-      },
-      {
-        Content:
-          "05:00-CCL-Planned Service Adjustment. From 11 Apr to 17 May 2026, Circle Line train services will end earlier at 11.00pm on Saturday nights and commence later at 9.00am on Sunday mornings. Please use alternative MRT lines and bus services.",
-        CreatedDate: "2026-04-10 00:15:58",
-      },
-    ],
-  };
+  // Avoid side-effects during render: update parent status in effect
+  useEffect(() => {
+    if (!ltaAlert) return;
+    if (ltaAlert.Status === 2) {
+      props.setAlertStatus(2);
+    } else if (ltaAlert.Status === 3) {
+      props.setAlertStatus(3);
+    } else {
+      props.setAlertStatus(1);
+    }
+  }, [ltaAlert, props]);
 
   return (
     <div>

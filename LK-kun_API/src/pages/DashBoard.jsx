@@ -81,7 +81,7 @@ const DashBoard = () => {
         </button>{" "}
         <button
           onClick={() => setAlertModal(true)}
-          className="px-4 py-2 rounded-md bg-blue-600 text-white text-sm sm:text-base hover:bg-blue-700"
+          className={`px-4 py-2 rounded-md text-white text-sm sm:text-base hover:bg-blue-700 ${alertStatus === 2 ? "bg-red-500 animate-pulse" : "bg-blue-600"}`}
         >
           ALERT
         </button>
@@ -103,7 +103,11 @@ const DashBoard = () => {
         <p className="text-sm">Getting user Location</p>
       )}
       {alertStatus === 2 ? (
-        <p>IMPORTANT!!!</p>
+        <p className="bg-red-500 text-olive-200">TRAIN DISRUPTION ALERT!!!!</p>
+      ) : alertStatus === 3 ? (
+        <p className="bg-orange-500 text-olive-200">
+          TRAIN DISRUPTION = THIS IS DEMO MESSAGE
+        </p>
       ) : (
         <p className="text-sm sm:text-base font-medium">
           no important alert yet...

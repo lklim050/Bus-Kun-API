@@ -1,3 +1,53 @@
+export const sampleStatus2 = {
+  Status: 2,
+  AffectedSegments: [
+    {
+      Line: "CCL",
+      Direction: "Both",
+      Stations: "CC1,CC2,CC3,CC4,CC5",
+      FreePublicBus: "All services",
+      FreeMRTShuttle: "Available",
+      MRTShuttleDirection: "Both",
+    },
+    {
+      Line: "EWL",
+      Direction: "Both",
+      Stations: "EW1,EW2,EW3,EW4,EW5",
+      FreePublicBus: "Available at designated bus stops",
+      FreeMRTShuttle: "Available",
+      MRTShuttleDirection: "Both",
+    },
+  ],
+  Message: [
+    {
+      Content:
+        "17:15-CCL: Due to a train fault, please allow for 20 minutes additional travel time between Dhoby Ghaut and Paya Lebar.",
+      CreatedDate: "2026-05-06 17:20:10",
+    },
+    {
+      Content:
+        "17:25-CCL: Free public bus services are available between Dhoby Ghaut and Paya Lebar. Bridging bus services have been activated.",
+      CreatedDate: "2026-05-06 17:30:05",
+    },
+    {
+      Content:
+        "17:20-EWL: Due to a track fault, please allow for 25 minutes additional travel time between Pasir Ris and Tanah Merah.",
+      CreatedDate: "2026-05-06 17:25:00",
+    },
+
+    {
+      Content:
+        "05:00-SK-Planned Service Adjustment. From 19 Apr to 18 Oct 2026, the Sengkang West LRT Inner Loop (i.e. direction of STC Sengkang towards SW1 Cheng Lim) will be closed. Commuters can continue to use the Sengkang West LRT Outer Loop (i.e. direction of STC Sengkang towards SW8 Renjong), peak-hours shuttle bus services, or regular bus services.",
+      CreatedDate: "2026-04-18 11:50:27",
+    },
+    {
+      Content:
+        "05:00-CCL-Planned Service Adjustment. From 11 Apr to 17 May 2026, Circle Line train services will end earlier at 11.00pm on Saturday nights and commence later at 9.00am on Sunday mornings. Please use alternative MRT lines and bus services.",
+      CreatedDate: "2026-04-10 00:15:58",
+    },
+  ],
+};
+
 //-----------------------------GET and FORMAT CURRENT TIME----------------------------------------------------
 export const nowSGTime = () => {
   const now = new Date();
