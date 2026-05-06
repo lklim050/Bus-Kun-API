@@ -280,9 +280,9 @@ export const fetchLtaData = async (busCode) => {
 };
 //----------------------------GET ALERT ------------------------------------------------
 
-export const getLtaAlert = async (accountKey) => {
+export const getLtaAlert = async () => {
   const res = await fetch(import.meta.env.VITE_ALERT_URL, {
-    headers: { AccountKey: accountKey },
+    headers: { AccountKey: import.meta.env.VITE_ACCKEY },
   });
 
   if (!res.ok) {

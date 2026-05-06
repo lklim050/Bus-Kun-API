@@ -13,6 +13,7 @@ import AlertModal from "../components/AlertModal";
 const DashBoard = () => {
   const [showModal, setShowModal] = useState(false);
   const [alertModal, setAlertModal] = useState(false);
+  const [alertStatus, setAlertStatus] = useState(1);
 
   //----------------------------GET USER LOCATION-------------------------------------
   const userLocationQuery = useQuery({
@@ -71,30 +72,43 @@ const DashBoard = () => {
         DASHBOARD
       </h1>
       <hr className="border-black-500" />
-      <button
-        onClick={() => setShowModal(true)}
-        className="px-4 py-2 rounded-md bg-blue-600 text-white text-sm sm:text-base hover:bg-blue-700"
-      >
-        ADD BUS STOP
-      </button>{" "}
-      <button
-        onClick={() => setAlertModal(true)}
-        className="px-4 py-2 rounded-md bg-blue-600 text-white text-sm sm:text-base hover:bg-blue-700"
-      >
-        ALERT
-      </button>
-      {showModal && <DashBoardModal setShowModal={setShowModal} />}
-      {alertModal && <AlertModal setAlertModal={setAlertModal} />}
-      <button
-        onClick={() => userLocationQuery.refetch()}
-        className="px-4 py-2 rounded-md bg-slate-700 text-white text-sm sm:text-base hover:bg-slate-800"
-      >
-        Refresh Location
-      </button>
+      <div className="flex flex-row gap-4 justify-evenly">
+        <button
+          onClick={() => setShowModal(true)}
+          className="px-4 py-2 rounded-md bg-lime-400 text-white text-sm sm:text-base hover:bg-green-700"
+        >
+          ADD BUS STOP
+        </button>{" "}
+        <button
+          onClick={() => setAlertModal(true)}
+          className="px-4 py-2 rounded-md bg-blue-600 text-white text-sm sm:text-base hover:bg-blue-700"
+        >
+          ALERT
+        </button>
+        {showModal && <DashBoardModal setShowModal={setShowModal} />}
+        {alertModal && (
+          <AlertModal
+            setAlertModal={setAlertModal}
+            setAlertStatus={setAlertStatus}
+          />
+        )}
+        <button
+          onClick={() => userLocationQuery.refetch()}
+          className="px-4 py-2 rounded-md bg-slate-700 text-white text-sm sm:text-base hover:bg-slate-800"
+        >
+          Refresh Location
+        </button>
+      </div>
       {userLocationQuery.isLoading && (
         <p className="text-sm">Getting user Location</p>
       )}
-      {/* <p className="text-sm sm:text-base font-medium">This is Your Location:</p> */}
+      {alertStatus === 2 ? (
+        <p>IMPORTANT!!!</p>
+      ) : (
+        <p className="text-sm sm:text-base font-medium">
+          no important alert yet...
+        </p>
+      )}
       {userLocationQuery.isSuccess && userLocationQuery.data ? (
         <p className="text-sm sm:text-base">{`Lat: ${userLocationQuery.data.latitude}, Long: ${userLocationQuery.data.longitude}`}</p>
       ) : (
