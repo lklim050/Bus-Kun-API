@@ -24,6 +24,7 @@ import L from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router";
 let DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
@@ -43,17 +44,7 @@ function RecenterMap({ coords }) {
 
 const WhereAmI = () => {
   const [myPos, setMyPos] = useState({ lat: 1.3, lng: 103.84 });
-
-  //--------------------- This finds user location-------------------------------
-  //   useEffect(() => {
-  //     // Ask browser for permission
-  //     navigator.geolocation.getCurrentPosition(
-  //       (pos) => {
-  //         setMyPos({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-  //       },
-  //       (err) => console.error("User denied location", err),
-  //     );
-  //   }, []);
+  const navigate = useNavigate();
 
   if (!myPos)
     return (
@@ -66,6 +57,15 @@ const WhereAmI = () => {
     enabled: false, // false to stop query
     staleTime: 60_000, // refresh every 60s
   });
+
+  useEffect(() => {
+    if (userLocationQuery.data) {
+      setMyPos({
+        lat: userLocationQuery.data.latitude,
+        lng: userLocationQuery.data.longitude,
+      });
+    }
+  }, [userLocationQuery.data]);
 
   //----------------------------CHECK NEARBY BUS-----------------------------------
 
@@ -95,6 +95,13 @@ const WhereAmI = () => {
 
   // return an empty array if return data is undefined to prevent runtime clash
   const nearbyBusData = nearbyBusStopQuery.data ?? [];
+
+  //-----------------------NAVIGATE TO NEARBY PAGE-------------------------------------
+
+  const clickBusStop = () => {
+    navigate("/nearby");
+  };
+
   //-----------------------------------RETURN---------------------------------------------
   return (
     <div>
@@ -142,8 +149,10 @@ const WhereAmI = () => {
                   <div key={index}>
                     <Marker position={[busStop.latitude, busStop.longitude]}>
                       <Popup>
-                        Bus Stop Number:{busStop.code} -{" "}
-                        {busStop.distanceKm.toFixed(2)}km away
+                        <button onClick={clickBusStop}>
+                          Bus Stop Number:{busStop.code} -{" "}
+                          {busStop.distanceKm.toFixed(2)}km away
+                        </button>
                       </Popup>
                     </Marker>
                   </div>
@@ -172,6 +181,18 @@ const WhereAmI = () => {
       >
         Fetch Nearby Bus Info
       </button>
+      <br />
+      {userLocationQuery.isLoading && (
+        <p className="text-sm">Getting user Location</p>
+      )}
+      {userLocationQuery.isSuccess && userLocationQuery.data ? (
+        <p className="text-sm sm:text-base">{`Lat: ${userLocationQuery.data.latitude}, Long: ${userLocationQuery.data.longitude}`}</p>
+      ) : (
+        <p className="text-sm sm:text-base text-gray-700">
+          location not ON, using fallback location Plaza Singapura (lat:1.3,
+          lon=103.84)
+        </p>
+      )}
       <br />
       <br />
     </div>

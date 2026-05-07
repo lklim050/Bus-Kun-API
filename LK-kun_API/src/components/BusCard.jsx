@@ -9,16 +9,18 @@ const BusCard = (props) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const [isFavorited, setIsFavorited] = useState(Boolean(props.id));
-  const [storedId, setStoredId] = useState(props.id || null);
+  const [isFavorited, setIsFavorited] = useState(Boolean(props.id)); // true if there is json.data.id
+  const [storedId, setStoredId] = useState(props.id || null); // from json.data.id to storedId
   const [toast, setToast] = useState(null);
 
+  //---------------------POST/DELETE FROM AIRTABLE----------------------------------
   const addDeleteFavourite = async ({ targetID, busStopCode }) => {
-    const isDeleting = !!targetID;
+    const isDeleting = !!targetID; //true if there is record on airtable
     const url = isDeleting
       ? `${import.meta.env.VITE_AIRTABLE_URL}/${targetID}`
       : import.meta.env.VITE_AIRTABLE_URL;
 
+    // body only works if isDeleting is false
     const res = await fetch(url, {
       method: isDeleting ? "DELETE" : "POST",
       headers: {
@@ -38,8 +40,11 @@ const BusCard = (props) => {
     return await res.json();
   };
 
+  // data is from addDeleteFavourite res.json(),
+  // variables is targetId and busStopCode passed in
   const addDeleteMutation = useMutation({
     mutationFn: addDeleteFavourite,
+    // writing status to toast
     onMutate: (variables) => {
       setToast({
         type: "pending",
@@ -78,23 +83,26 @@ const BusCard = (props) => {
       });
     }
   };
-
+  //----------------------------OTHERS FUNCTION NEEDED------------------------------------------
+  // To confirm distance can return either number string or text string instead of undefined
   const distanceText = (() => {
     const d = Number(props.distanceKm);
     return Number.isFinite(d) ? `${d.toFixed(2)} km away` : "Distance unknown";
   })();
 
+  //sort bus number by numeric
   const sortedServices = props.services
     ? [...props.services].sort(
         (a, b) => Number(a.ServiceNo) - Number(b.ServiceNo),
       )
     : [];
 
+  //click bus number to search for route information
   const clickBusNo = (e, busNo) => {
     e.stopPropagation();
     navigate(`/search?busNo=${busNo}`);
   };
-
+  //------------------------------RETURN---------------------------------------------------------------------
   return (
     <div className="mx-auto w-full max-w-2xl border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50 shadow-sm flex flex-col md:flex-row gap-4 box-border overflow-hidden">
       <div className="flex flex-col sm:flex-col gap-2 pb-4 md:pb-0 md:pr-4 border-b md:border-b-0 md:border-r border-gray-200 md:w-36 shrink-0">

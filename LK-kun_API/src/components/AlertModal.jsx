@@ -1,7 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
-import { getLtaAlert } from "../utils/busApi";
-import { useQuery } from "@tanstack/react-query";
 import AlertCard from "./AlertCard";
 
 const OverLay = (props) => {

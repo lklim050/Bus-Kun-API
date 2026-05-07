@@ -17,6 +17,7 @@ const DashBoard = () => {
   const [showModal, setShowModal] = useState(false);
   const [alertModal, setAlertModal] = useState(false);
   const [alertStatus, setAlertStatus] = useState(1);
+  const [isTest, setIsTest] = useState(false);
 
   //----------------------------GET USER LOCATION-------------------------------------
   const userLocationQuery = useQuery({
@@ -72,20 +73,15 @@ const DashBoard = () => {
     queryKey: ["alerts"],
     queryFn: getLtaAlert,
     enabled: true,
-    staleTime: 300_000,
-    // onSuccess: () => {
-    //   if (alertStatus === 2) {
-    //     setAlertStatus(2);
-    //   } else {
-    //     setAlertStatus(1);
-    //   }
-    // },
+    staleTime: 60_000,
   });
 
-  // const ltaAlert = ltaAlertQuery.data?.value ?? null;
+  // this is toggle demo and live
+  const toggleTest = () => {
+    setIsTest(!isTest);
+  };
 
-  // this is sample data for demo
-  const ltaAlert = sampleStatus2;
+  const ltaAlert = isTest ? sampleStatus2 : (ltaAlertQuery.data?.value ?? null);
 
   useEffect(() => {
     if (!ltaAlert) return;
@@ -96,7 +92,7 @@ const DashBoard = () => {
     } else {
       setAlertStatus(1);
     }
-  }, [ltaAlert]);
+  }, [ltaAlert, isTest]);
 
   //------------------------------------RETURN------------------------------------------------
 
@@ -108,14 +104,28 @@ const DashBoard = () => {
       <hr className="border-black-500" />
       <div className="flex flex-row gap-4 justify-evenly">
         <button
-          onClick={() => setShowModal(true)}
+          onClick={() => setShowModal(isTest)}
           className="px-4 py-2 rounded-md bg-lime-400 text-white text-sm sm:text-base hover:bg-green-700"
         >
           ADD BUS STOP
-        </button>{" "}
+        </button>
+        <button
+          onClick={() => userLocationQuery.refetch()}
+          className="px-4 py-2 rounded-md bg-slate-700 text-white text-sm sm:text-base hover:bg-slate-800"
+        >
+          Refresh Location
+        </button>
+        <button
+          onClick={toggleTest}
+          className={
+            "px-4 py-2 rounded-md text-white text-sm sm:text-base bg-slate-700 hover:bg-blue-700"
+          }
+        >
+          Test ALERT
+        </button>
         <button
           onClick={() => setAlertModal(true)}
-          className={`px-4 py-2 rounded-md text-white text-sm sm:text-base hover:bg-blue-700 ${alertStatus === 2 || 3 ? "bg-red-500 animate-pulse" : "bg-blue-600"}`}
+          className={`px-4 py-2 rounded-md text-white text-sm sm:text-base hover:bg-blue-700 ${alertStatus === 2 || alertStatus === 3 ? "bg-red-500 animate-pulse" : "bg-blue-600"}`}
         >
           ALERT
         </button>
@@ -129,12 +139,6 @@ const DashBoard = () => {
             message={ltaAlert.Message}
           />
         )}
-        <button
-          onClick={() => userLocationQuery.refetch()}
-          className="px-4 py-2 rounded-md bg-slate-700 text-white text-sm sm:text-base hover:bg-slate-800"
-        >
-          Refresh Location
-        </button>
       </div>
 
       {userLocationQuery.isLoading && (
