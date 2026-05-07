@@ -275,7 +275,7 @@ export const getStoredBusStopData = async (
   // this ensure all processes in function conclude before return
   return Promise.all(stopRequests);
 };
-//---------------------------------------------------------------------------------------------------------------
+//--------------------------FETCH FROM LTA (BUS ROUTE INFORMATION WITH XML PARSE---------------------------
 export const fetchLtaData = async (busCode) => {
   const res = await fetch(`/map/busService/bus_route_xml/${busCode}.xml`);
 
@@ -340,3 +340,29 @@ export const getLtaAlert = async () => {
   }
   return res.json();
 };
+
+//-------------------------GET LOCATION NAME--------------------------------------------
+export const getLocationName = async (lat, lng) => {
+  const res = await fetch(
+    `${import.meta.env.VITE_LOCATION_URL}&lat=${lat}&lon=${lng}&accept-language=en`,
+  );
+
+  if (!res.ok) {
+    throw new Error("cannot get location name");
+  }
+
+  return res.json();
+};
+
+// //-------------------------GET LOCATION NAME--------------------------------------------
+// export const getLocationName = async (lat, lng) => {
+//   const res = await fetch(
+//     `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`,
+//   );
+
+//   if (!res.ok) {
+//     throw new Error("cannot get location name");
+//   }
+
+//   return res.json();
+// };

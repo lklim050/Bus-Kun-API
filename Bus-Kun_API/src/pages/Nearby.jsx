@@ -9,6 +9,7 @@ import {
   nowSGTime,
   getStoredBusStop,
   haversineDistance,
+  getLocationName,
 } from "../utils/busApi";
 import BusCard from "../components/BusCard";
 import { useQuery } from "@tanstack/react-query";
@@ -74,6 +75,19 @@ const Nearby = () => {
     return saved ? { ...stop, id: saved.id, type: saved.type } : stop;
   });
 
+  //---------------------------GET LOCATION NAME-------------------------------------
+
+  const locationNameQuery = useQuery({
+    queryKey: ["locationName"],
+    queryFn: () =>
+      getLocationName(
+        userLocationQuery.data?.latitude,
+        userLocationQuery.data?.longitude,
+      ),
+    enabled:
+      !!userLocationQuery.data?.latitude && !!userLocationQuery.data?.longitude,
+  });
+
   //--------------------------------RETURN--------------------------------------------
   return (
     <div className="max-w-6xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-4">
@@ -89,7 +103,12 @@ const Nearby = () => {
         <p className="text-sm">Getting user Location</p>
       )}
       {userLocationQuery.isSuccess && userLocationQuery.data ? (
-        <p className="text-sm sm:text-base">{`Lat: ${userLocationQuery.data.latitude}, Long: ${userLocationQuery.data.longitude}`}</p>
+        <p className="text-sm sm:text-base">
+          {`Lat: ${userLocationQuery.data.latitude}, Long: ${userLocationQuery.data.longitude}, you should be around `}
+          <span className="font-bold">
+            {locationNameQuery.data?.display_name}
+          </span>
+        </p>
       ) : (
         <p className="text-sm sm:text-base text-gray-700">
           location not ON, using fallback location Plaza Singapura (lat:1.3,
@@ -131,6 +150,9 @@ const Nearby = () => {
             No nearby bus stops found
           </p>
         ))}
+      <br />
+      <br />
+
       <br />
     </div>
   );

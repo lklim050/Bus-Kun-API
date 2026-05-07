@@ -9,6 +9,7 @@ import {
   getUserLocation,
   nowSGTime,
   haversineDistance,
+  getLocationName,
 } from "../utils/busApi";
 
 // below are packages from leaflet
@@ -28,10 +29,19 @@ import { useNavigate } from "react-router";
 let DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
+  iconSize: [29, 51],
+  iconAnchor: [18, 51],
 });
 L.Marker.prototype.options.icon = DefaultIcon;
+
+let BusIcon = L.icon({
+  iconUrl: "/bus-icon.png",
+  shadowUrl: "/bus-shadow-icon.png",
+  iconSize: [33, 51],
+  iconAnchor: [18, 51],
+  shadowSize: [33, 51],
+  shadowAnchor: [17, 51],
+});
 
 // Helper component to center map when location is found
 function RecenterMap({ coords }) {
@@ -102,11 +112,24 @@ const WhereAmI = () => {
     navigate("/nearby");
   };
 
+  //----------------------------GET LOCATION NAME-----------------------------------------
+
+  const locationNameQuery = useQuery({
+    queryKey: ["locationName"],
+    queryFn: () =>
+      getLocationName(
+        userLocationQuery.data?.latitude,
+        userLocationQuery.data?.longitude,
+      ),
+    enabled:
+      !!userLocationQuery.data?.latitude && !!userLocationQuery.data?.longitude,
+  });
+
   //-----------------------------------RETURN---------------------------------------------
   return (
     <div>
-      <h1 className="text-2xl mt-3 sm:text-3xl font-bold tracking-tight">
-        WHERE AM I??
+      <h1 className="text-2xl mt-3 ml-5 sm:text-3xl font-bold tracking-tight">
+        MAP
       </h1>
       <hr className="border-gray-300" />
       <div className="h-[500px] w-full rounded-xl overflow-hidden border-2 border-blue-500">
@@ -147,10 +170,14 @@ const WhereAmI = () => {
               <div>
                 {nearbyBusData.map((busStop, index) => (
                   <div key={index}>
-                    <Marker position={[busStop.latitude, busStop.longitude]}>
+                    <Marker
+                      position={[busStop.latitude, busStop.longitude]}
+                      icon={BusIcon}
+                    >
                       <Popup>
                         <button onClick={clickBusStop}>
-                          Bus Stop Number:{busStop.code} -{" "}
+                          <span className="font-bold">{busStop.code}</span>{" "}
+                          <br />
                           {busStop.distanceKm.toFixed(2)}km away
                         </button>
                       </Popup>
@@ -186,7 +213,12 @@ const WhereAmI = () => {
         <p className="text-sm">Getting user Location</p>
       )}
       {userLocationQuery.isSuccess && userLocationQuery.data ? (
-        <p className="text-sm sm:text-base">{`Lat: ${userLocationQuery.data.latitude}, Long: ${userLocationQuery.data.longitude}`}</p>
+        <p className="text-sm sm:text-base">
+          {`Lat: ${userLocationQuery.data.latitude}, Long: ${userLocationQuery.data.longitude}, you should be around `}
+          <span className="font-bold">
+            {locationNameQuery.data?.display_name}
+          </span>
+        </p>
       ) : (
         <p className="text-sm sm:text-base text-gray-700">
           location not ON, using fallback location Plaza Singapura (lat:1.3,
@@ -194,6 +226,7 @@ const WhereAmI = () => {
         </p>
       )}
       <br />
+      {JSON.stringify(locationNameQuery.data.display_name)}
       <br />
     </div>
   );

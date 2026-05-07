@@ -7,6 +7,7 @@ import {
   getStoredBusStopData,
   getLtaAlert,
   sampleStatus2,
+  getLocationName,
 } from "../utils/busApi";
 import BusCard from "../components/BusCard";
 import DashBoardModal from "../components/DashBoardModal";
@@ -94,6 +95,18 @@ const DashBoard = () => {
     }
   }, [ltaAlert, isTest]);
 
+  //--------------------------GET LOCATION NAME-----------------------------------------
+  const locationNameQuery = useQuery({
+    queryKey: ["locationName"],
+    queryFn: () =>
+      getLocationName(
+        userLocationQuery.data?.latitude,
+        userLocationQuery.data?.longitude,
+      ),
+    enabled:
+      !!userLocationQuery.data?.latitude && !!userLocationQuery.data?.longitude,
+  });
+
   //------------------------------------RETURN------------------------------------------------
 
   return (
@@ -165,7 +178,12 @@ const DashBoard = () => {
         </p>
       )}
       {userLocationQuery.isSuccess && userLocationQuery.data ? (
-        <p className="text-sm sm:text-base">{`Lat: ${userLocationQuery.data.latitude}, Long: ${userLocationQuery.data.longitude}`}</p>
+        <p className="text-sm sm:text-base">
+          {`Lat: ${userLocationQuery.data.latitude}, Long: ${userLocationQuery.data.longitude}, you should be around `}
+          <span className="font-bold">
+            {locationNameQuery.data?.display_name}
+          </span>
+        </p>
       ) : (
         <p className="text-sm sm:text-base text-gray-700">
           location not ON, using fallback location Plaza Singapura (lat:1.3,

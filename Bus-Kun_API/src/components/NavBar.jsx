@@ -76,24 +76,6 @@ const Navbar = () => {
           </>
         )}
       </NavLink>
-      {/*---------------------TO DELETE BEFORE SUBMISSION-----------------------------------*/}
-      <NavLink to="/test" className={getLinkClass}>
-        {({ isActive }) => (
-          <>
-            <span
-              className={`text-xl sm:text-2xl mb-0.5 sm:mb-1 transition-transform duration-300 ${
-                isActive ? "transform -translate-y-0.5 scale-110" : ""
-              }`}
-            >
-              📋
-            </span>
-            <span className="text-[11px] sm:text-xs font-medium text-center">
-              Test
-            </span>
-          </>
-        )}
-      </NavLink>
-      {/*---------------------TO DELETE BEFORE SUBMISSION-----------------------------------*/}
     </nav>
   );
 };

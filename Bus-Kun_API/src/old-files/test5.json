@@ -1,0 +1,28 @@
+{
+  "place_id": 255842036,
+  "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "node",
+  "osm_id": 9061515417,
+  "lat": "1.2738962",
+  "lon": "103.8452218",
+  "category": "amenity",
+  "type": "cafe",
+  "place_rank": 30,
+  "importance": 0.00008432822156095243,
+  "addresstype": "amenity",
+  "name": "Cafe 2000",
+  "display_name": "Cafe 2000, 81, Anson Road, Anson, Civic District, Downtown Core, Central Region, Singapore, 079908, Singapore",
+  "address": {
+    "amenity": "Cafe 2000",
+    "house_number": "81",
+    "road": "Anson Road",
+    "neighbourhood": "Anson",
+    "suburb": "Civic District",
+    "borough": "Central Region",
+    "city": "Singapore",
+    "postcode": "079908",
+    "country": "Singapore",
+    "country_code": "sg"
+  },
+  "boundingbox": ["1.2738462", "1.2739462", "103.8451718", "103.8452718"]
+}
