@@ -48,7 +48,7 @@ export const sampleStatus2 = {
   ],
 };
 
-//-----------------------------GET and FORMAT CURRENT TIME----------------------------------------------------
+// --- GET AND FORMAT CURRENT TIME ---
 export const nowSGTime = () => {
   const now = new Date();
   const datePart = now.toLocaleDateString("sv-SE", {
@@ -61,7 +61,7 @@ export const nowSGTime = () => {
   return `${datePart}T${timePart}+08:00`;
 };
 
-//-----------------------DIFFERENCE BETWEEN CURRENT TIME AND ARRIVAL TIME-------------------------------------
+// --- GET ARRIVAL DIFFERENCE IN MINUTES ---
 export const formatArrival = (bus) => {
   if (!bus) {
     return "N/A";
@@ -85,7 +85,7 @@ export const formatArrival = (bus) => {
 
   return `${differenceInMinutes} min`;
 };
-//--------------------HAVERSINE METHOD TO GET DISTANCE FROM LAT LONG COORDINATE---------------------------------
+// --- HAVERSINE DISTANCE FROM LAT/LON ---
 export const haversineDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -99,7 +99,7 @@ export const haversineDistance = (lat1, lon1, lat2, lon2) => {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 };
-//----------------------------FETCH ALL SG BUS STOP FROM STATIC JSON FILE ---------------------------------------
+// --- FETCH ALL SG BUS STOPS FROM STATIC JSON ---
 export const getAllBusStop = async () => {
   const res = await fetch("/stops.json");
   if (!res.ok) {
@@ -107,7 +107,7 @@ export const getAllBusStop = async () => {
   }
   return await res.json();
 };
-//-------------------------RETURN NEARBY BUS CODES WITH REF TO USER LOCATION -------------------------------------
+// --- RETURN NEARBY BUS STOPS FOR USER LOCATION ---
 export const findNearbyStops = (
   allBusStops,
   lat = 1.3,
@@ -132,7 +132,7 @@ export const findNearbyStops = (
     .filter((stop) => stop.distanceKm <= radiusKm)
     .sort((a, b) => a.distanceKm - b.distanceKm);
 };
-//--------------------------GET USER COORDINATE USING NAVIGATOR.GEOLOCATION-------------------------------------------
+// --- GET USER COORDINATES WITH GEOLOCATION ---
 export const getUserLocation = async () => {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
@@ -155,7 +155,7 @@ export const getUserLocation = async () => {
     );
   });
 };
-//---------------------------------------------------------------------------------------------------------------
+// --- GET BUS STOP ARRIVAL DATA ---
 export const getBusStopData = async (busStopCode, accountKey) => {
   const res = await fetch(
     `${import.meta.env.VITE_BUSARRIVAL_URL}${busStopCode}`,
@@ -170,7 +170,7 @@ export const getBusStopData = async (busStopCode, accountKey) => {
 
   return await res.json();
 };
-//---------------------------------------------------------------------------------------------------------------
+// --- BUILD BUS STOP DETAILS WITH DISTANCE ---
 export const getBusStopDetails = (
   busStopCode,
   allStopsData,
@@ -194,7 +194,7 @@ export const getBusStopDetails = (
     distanceKm: distance,
   };
 };
-//---------------------------------------------------------------------------------------------------------------
+// --- GET AND ATTACH ARRIVAL DATA FOR NEARBY STOPS ---
 export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
   // Create an array of Promises immediately
   const stopRequests = nearbyStops.map(async (stop) => {
@@ -222,7 +222,7 @@ export const getNearbyBusStopData = async (nearbyStops, accountKey) => {
   return Promise.all(stopRequests);
 };
 
-//---------------------------------------------------------------------------------------------------------------
+// --- GET STORED BUS STOPS FROM AIRTABLE ---
 export const getStoredBusStop = async () => {
   const res = await fetch(import.meta.env.VITE_AIRTABLE_URL, {
     headers: {
@@ -233,7 +233,7 @@ export const getStoredBusStop = async () => {
   });
   return await res.json();
 };
-//---------------------------------------------------------------------------------------------------------------
+// --- GET STORED BUS STOPS WITH ARRIVAL DETAILS ---
 export const getStoredBusStopData = async (
   storedBusStop,
   accountKey,
@@ -275,7 +275,7 @@ export const getStoredBusStopData = async (
   // this ensure all processes in function conclude before return
   return Promise.all(stopRequests);
 };
-//--------------------------FETCH FROM LTA (BUS ROUTE INFORMATION WITH XML PARSE---------------------------
+// --- FETCH AND PARSE LTA BUS ROUTE XML ---
 export const fetchLtaData = async (busCode) => {
   const res = await fetch(`/map/busService/bus_route_xml/${busCode}.xml`);
 
@@ -328,7 +328,7 @@ export const fetchLtaData = async (busCode) => {
     };
   });
 };
-//----------------------------GET ALERT ------------------------------------------------
+// --- GET TRAIN ALERT ---
 
 export const getLtaAlert = async () => {
   const res = await fetch(import.meta.env.VITE_ALERT_URL, {
@@ -341,7 +341,7 @@ export const getLtaAlert = async () => {
   return res.json();
 };
 
-//-------------------------GET LOCATION NAME--------------------------------------------
+// --- GET LOCATION NAME ---
 export const getLocationName = async (lat, lng) => {
   const res = await fetch(
     `${import.meta.env.VITE_LOCATION_URL}&lat=${lat}&lon=${lng}&accept-language=en`,
@@ -353,16 +353,3 @@ export const getLocationName = async (lat, lng) => {
 
   return res.json();
 };
-
-// //-------------------------GET LOCATION NAME--------------------------------------------
-// export const getLocationName = async (lat, lng) => {
-//   const res = await fetch(
-//     `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`,
-//   );
-
-//   if (!res.ok) {
-//     throw new Error("cannot get location name");
-//   }
-
-//   return res.json();
-// };

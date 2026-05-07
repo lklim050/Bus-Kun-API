@@ -13,7 +13,7 @@ const BusCard = (props) => {
   const [storedId, setStoredId] = useState(props.id || null); // from json.data.id to storedId
   const [toast, setToast] = useState(null);
 
-  //---------------------POST/DELETE FROM AIRTABLE----------------------------------
+  // --- POST/DELETE FROM AIRTABLE ---
   const addDeleteFavourite = async ({ targetID, busStopCode }) => {
     const isDeleting = !!targetID; //true if there is record on airtable
     const url = isDeleting
@@ -83,7 +83,7 @@ const BusCard = (props) => {
       });
     }
   };
-  //----------------------------OTHERS FUNCTION NEEDED------------------------------------------
+  // --- DERIVED DISPLAY DATA ---
   // To confirm distance can return either number string or text string instead of undefined
   const distanceText = (() => {
     const d = Number(props.distanceKm);
@@ -102,7 +102,7 @@ const BusCard = (props) => {
     e.stopPropagation();
     navigate(`/search?busNo=${busNo}`);
   };
-  //------------------------------RETURN---------------------------------------------------------------------
+  // --- RENDER ---
   return (
     <div className="mx-auto w-full max-w-2xl border border-gray-200 rounded-xl p-4 mb-4 bg-slate-200/70 shadow-sm flex flex-col md:flex-row gap-4 box-border overflow-hidden">
       <div className="flex flex-col sm:flex-col gap-2 pb-4 md:pb-0 md:pr-4 border-b md:border-b-0 md:border-r border-gray-200 md:w-36 shrink-0">

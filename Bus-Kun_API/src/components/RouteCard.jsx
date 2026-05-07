@@ -47,7 +47,7 @@ const RouteCard = (props) => {
       </div>
     );
   };
-  //---------------------------------RETURN------------------------------------------------------
+  // --- RENDER ---
   return (
     <div className="w-full ">
       {/* 1. TAB TOGGLE (Only visible on mobile/tablet, hidden on lg screens) */}

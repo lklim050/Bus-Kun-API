@@ -14,7 +14,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 const OverLay = (props) => {
   const [input, setInput] = useState("");
   const queryClient = useQueryClient();
-  //----------------------------GET USER LOCATION-------------------------------------
+  // --- GET USER LOCATION ---
   const userLocationQuery = useQuery({
     queryKey: ["userLocation"],
     queryFn: getUserLocation,
@@ -22,7 +22,7 @@ const OverLay = (props) => {
     staleTime: 60_000, // refresh every 60s
   });
 
-  //------------------GET ALL BUS STOPS DATA-------------------------------------------
+  // --- GET ALL BUS STOPS DATA ---
   const allBusStopQuery = useQuery({
     queryKey: ["allBusStop"],
     queryFn: getAllBusStop,
@@ -32,7 +32,6 @@ const OverLay = (props) => {
     queryFn: () => getBusStopData(input, import.meta.env.VITE_ACCKEY),
     enabled: false, // false to stop query
     staleTime: 60_000, // auto refresh for 60s
-    //   refetchOnWindowFocus: false,  // don't refetch when tab is focused
   });
 
   // Wrap single query result into proper stop object with details from stops.json
@@ -51,7 +50,7 @@ const OverLay = (props) => {
         services: busStopQuery.data.Services || [],
       }
     : null;
-  // ------------------GET STORED BUS STOP FROM AIRTABLE-----------------------------------
+  // --- GET STORED BUS STOP FROM AIRTABLE ---
   const storedBusStopQuery = useQuery({
     queryKey: ["storedBusStop"],
     queryFn: getStoredBusStop,
@@ -86,7 +85,7 @@ const OverLay = (props) => {
     ? [...storedStopQuery.data].sort((a, b) => a.distanceKm - b.distanceKm)
     : [];
 
-  //---------------------GET BUS STOP FROM INPUT (MODIFIED)---------------------------------
+  // --- GET BUS STOP FROM INPUT ---
 
   // check stored id/type when available so BusCard shows correct saved state
   const busStopDataEx = busStopData
@@ -100,7 +99,7 @@ const OverLay = (props) => {
       })()
     : null;
 
-  //--------------------------------------RETURN-------------------------------------------------
+  // --- RENDER ---
   return (
     <div className="fixed inset-0 z-40 bg-black/70">
       <div

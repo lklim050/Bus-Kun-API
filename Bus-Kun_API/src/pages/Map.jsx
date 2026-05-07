@@ -2,13 +2,9 @@ import React from "react";
 import { useState, useEffect } from "react";
 import {
   findNearbyStops,
-  formatArrival,
   getAllBusStop,
-  getBusStopData,
   getNearbyBusStopData,
   getUserLocation,
-  nowSGTime,
-  haversineDistance,
   getLocationName,
 } from "../utils/busApi";
 
@@ -60,7 +56,7 @@ const WhereAmI = () => {
     return (
       <p className="p-4 bg-gray-100 animate-pulse">Finding your location...</p>
     );
-  //----------------------------GET USER LOCATION-------------------------------------
+  // --- GET USER LOCATION ---
   const userLocationQuery = useQuery({
     queryKey: ["userLocation"],
     queryFn: getUserLocation,
@@ -77,9 +73,7 @@ const WhereAmI = () => {
     }
   }, [userLocationQuery.data]);
 
-  //----------------------------CHECK NEARBY BUS-----------------------------------
-
-  //get from static file
+  // --- GET STATIC BUS STOPS ---
   const allBusStopQuery = useQuery({
     queryKey: ["allBusStop"],
     queryFn: getAllBusStop,
@@ -89,7 +83,7 @@ const WhereAmI = () => {
     return findNearbyStops(allBusStopQuery.data, lat, lon, radiusKm);
   }
 
-  //----------------GET/MAP NEARBY BUS STOP INFORMATION-------------------------------
+  // --- GET NEARBY BUS STOP INFORMATION ---
   const nearbyBusStopArray = getNearbyStops(
     userLocationQuery.data?.latitude,
     userLocationQuery.data?.longitude,
@@ -103,16 +97,15 @@ const WhereAmI = () => {
     enabled: false, // true to fetch url
   });
 
-  // return an empty array if return data is undefined to prevent runtime clash
   const nearbyBusData = nearbyBusStopQuery.data ?? [];
 
-  //-----------------------NAVIGATE TO NEARBY PAGE-------------------------------------
+  // --- NAVIGATE TO NEARBY PAGE ---
 
   const clickBusStop = () => {
     navigate("/nearby");
   };
 
-  //----------------------------GET LOCATION NAME-----------------------------------------
+  // --- GET LOCATION NAME ---
 
   const locationNameQuery = useQuery({
     queryKey: ["locationName"],
@@ -125,7 +118,7 @@ const WhereAmI = () => {
       !!userLocationQuery.data?.latitude && !!userLocationQuery.data?.longitude,
   });
 
-  //-----------------------------------RETURN---------------------------------------------
+  // --- RENDER ---
   return (
     <div>
       <h1 className="text-2xl mt-3 ml-5 sm:text-3xl font-bold tracking-tight">

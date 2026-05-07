@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   getUserLocation,
   getAllBusStop,
@@ -12,7 +12,6 @@ import {
 import BusCard from "../components/BusCard";
 import DashBoardModal from "../components/DashBoardModal";
 import AlertModal from "../components/AlertModal";
-import { useEffect } from "react";
 
 const DashBoard = () => {
   const [showModal, setShowModal] = useState(false);
@@ -20,7 +19,7 @@ const DashBoard = () => {
   const [alertStatus, setAlertStatus] = useState(1);
   const [isTest, setIsTest] = useState(false);
 
-  //----------------------------GET USER LOCATION-------------------------------------
+  // --- GET USER LOCATION ---
   const userLocationQuery = useQuery({
     queryKey: ["userLocation"],
     queryFn: getUserLocation,
@@ -28,13 +27,13 @@ const DashBoard = () => {
     staleTime: 60_000, // refresh every 60s
   });
 
-  //------------------GET ALL BUS STOPS DATA-------------------------------------------
+  // --- GET ALL BUS STOPS DATA ---
   const allBusStopQuery = useQuery({
     queryKey: ["allBusStop"],
     queryFn: getAllBusStop,
   });
 
-  // ------------------GET STORED BUS STOP FROM AIRTABLE-----------------------------------
+  // --- GET STORED BUS STOP FROM AIRTABLE ---
   const storedBusStopQuery = useQuery({
     queryKey: ["storedBusStop"],
     queryFn: getStoredBusStop,
@@ -69,7 +68,7 @@ const DashBoard = () => {
     ? [...storedStopQuery.data].sort((a, b) => a.distanceKm - b.distanceKm)
     : [];
 
-  //----------------------- GET LTA Alert------------------------------------
+  // --- GET LTA ALERT ---
   const ltaAlertQuery = useQuery({
     queryKey: ["alerts"],
     queryFn: getLtaAlert,
@@ -95,7 +94,7 @@ const DashBoard = () => {
     }
   }, [ltaAlert, isTest]);
 
-  //--------------------------GET LOCATION NAME-----------------------------------------
+  // --- GET LOCATION NAME ---
   const locationNameQuery = useQuery({
     queryKey: ["locationName"],
     queryFn: () =>
@@ -107,7 +106,7 @@ const DashBoard = () => {
       !!userLocationQuery.data?.latitude && !!userLocationQuery.data?.longitude,
   });
 
-  //------------------------------------RETURN------------------------------------------------
+  // --- RENDER ---
 
   return (
     <div className="max-w-6xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-4 ">

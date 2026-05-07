@@ -6,8 +6,7 @@ import { useSearchParams } from "react-router";
 
 const Search = () => {
   const [input, setInput] = useState("");
-  const [activeTab, setActiveTab] = useState("route");
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const busNoFromUrl = searchParams.get(`busNo`) || "";
 
@@ -18,7 +17,6 @@ const Search = () => {
     retry: 1,
   });
 
-  useEffect;
   useEffect(() => {
     setInput(busNoFromUrl);
   }, [busNoFromUrl]);

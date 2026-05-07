@@ -59,7 +59,6 @@ const Navbar = () => {
           </>
         )}
       </NavLink>
-      {/*---------------------TEST NEW FEATURE-----------------------------------*/}
       <NavLink to="/map" className={getLinkClass}>
         {({ isActive }) => (
           <>

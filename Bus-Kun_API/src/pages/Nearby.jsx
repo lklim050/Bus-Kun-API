@@ -1,21 +1,17 @@
 import React from "react";
 import {
   findNearbyStops,
-  formatArrival,
   getAllBusStop,
-  getBusStopData,
   getNearbyBusStopData,
   getUserLocation,
-  nowSGTime,
   getStoredBusStop,
-  haversineDistance,
   getLocationName,
 } from "../utils/busApi";
 import BusCard from "../components/BusCard";
 import { useQuery } from "@tanstack/react-query";
 
 const Nearby = () => {
-  //----------------------------GET USER LOCATION-------------------------------------
+  // --- GET USER LOCATION ---
   const userLocationQuery = useQuery({
     queryKey: ["userLocation"],
     queryFn: getUserLocation,
@@ -23,9 +19,7 @@ const Nearby = () => {
     staleTime: 60_000, // refresh every 60s
   });
 
-  //----------------------------CHECK NEARBY BUS-----------------------------------
-
-  //get from static file
+  // --- GET STATIC BUS STOPS ---
   const allBusStopQuery = useQuery({
     queryKey: ["allBusStop"],
     queryFn: getAllBusStop,
@@ -35,7 +29,7 @@ const Nearby = () => {
     return findNearbyStops(allBusStopQuery.data, lat, lon, radiusKm);
   }
 
-  //----------------GET/MAP NEARBY BUS STOP INFORMATION-------------------------------
+  // --- GET NEARBY BUS STOP INFORMATION ---
   const nearbyBusStopArray = getNearbyStops(
     userLocationQuery.data?.latitude,
     userLocationQuery.data?.longitude,
@@ -45,11 +39,10 @@ const Nearby = () => {
     queryKey: ["nearbyBusStop"],
     queryFn: () =>
       getNearbyBusStopData(nearbyBusStopArray, import.meta.env.VITE_ACCKEY),
-    staleTime: 60_000,
-    enabled: false, // true to fetch url
+    staleTime: 30_000,
+    enabled: true, // true to fetch url
   });
 
-  // return an empty array if return data is undefined to prevent runtime clash
   const nearbyBusData = nearbyBusStopQuery.data ?? [];
 
   // fetch stored favourites so we can mark nearby stops that are already saved
@@ -75,7 +68,7 @@ const Nearby = () => {
     return saved ? { ...stop, id: saved.id, type: saved.type } : stop;
   });
 
-  //---------------------------GET LOCATION NAME-------------------------------------
+  // --- GET LOCATION NAME ---
 
   const locationNameQuery = useQuery({
     queryKey: ["locationName"],
@@ -88,7 +81,7 @@ const Nearby = () => {
       !!userLocationQuery.data?.latitude && !!userLocationQuery.data?.longitude,
   });
 
-  //--------------------------------RETURN--------------------------------------------
+  // --- RENDER ---
   return (
     <div className="max-w-6xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-4 ">
       <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">NEARBY</h1>

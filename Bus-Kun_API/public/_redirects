@@ -1,0 +1,2 @@
+/ltaodataservice/*  https://datamall2.mytransport.sg/ltaodataservice/:splat  200!
+/maps/*  https://www.lta.gov.sg/maps/:splat  200!
