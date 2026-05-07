@@ -117,20 +117,20 @@ const DashBoard = () => {
       <div className="flex flex-row gap-4 justify-evenly">
         <button
           onClick={() => setShowModal(true)}
-          className="px-4 py-2 rounded-md bg-lime-400 text-white text-sm sm:text-base hover:bg-green-700"
+          className="px-4 py-2  bg-lime-300 text-green-900 text-sm sm:text-base hover:bg-green-700 rounded-md"
         >
           ADD BUS STOP
         </button>
         <button
           onClick={() => userLocationQuery.refetch()}
-          className="px-4 py-2 rounded-md bg-slate-700 text-white text-sm sm:text-base hover:bg-slate-800"
+          className="px-4 py-2  bg-slate-700 text-white text-sm sm:text-base hover:bg-slate-300 rounded-md"
         >
           Refresh Location
         </button>
         <button
           onClick={toggleTest}
           className={
-            "px-4 py-2 rounded-md text-white text-sm sm:text-base bg-slate-700 hover:bg-blue-700"
+            "px-4 py-2 rounded-md text-white text-sm sm:text-base bg-slate-700 hover:bg-slate-300"
           }
         >
           Test ALERT
