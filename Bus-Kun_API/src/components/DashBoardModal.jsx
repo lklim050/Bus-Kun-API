@@ -104,11 +104,11 @@ const OverLay = (props) => {
   return (
     <div className="fixed inset-0 z-40 bg-black/70">
       <div
-        className="fixed inset-0 bg-white overflow-y-auto p-3 sm:p-4 
+        className="fixed inset-0 bg-slate-200/50 overflow-y-auto p-3 sm:p-4 
                 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 
-                sm:w-[92%] sm:max-w-4xl sm:max-h-[80vh] sm:rounded-xl"
+                sm:w-[92%] sm:max-w-4xl sm:max-h-[80vh] sm:rounded-xl "
       >
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-white w-50">
           ADD BUS STOP HERE
         </h1>
         <div className="flex flex-col sm:flex-row gap-2 sm:items-center mb-3">
@@ -128,7 +128,7 @@ const OverLay = (props) => {
             value={input}
             placeholder="input bus stop no."
             onChange={(e) => setInput(e.target.value.replace(/\D/g, ""))}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white"
           />
           <button
             type="button"

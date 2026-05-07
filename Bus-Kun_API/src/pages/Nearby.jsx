@@ -90,7 +90,7 @@ const Nearby = () => {
 
   //--------------------------------RETURN--------------------------------------------
   return (
-    <div className="max-w-6xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-4">
+    <div className="max-w-6xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-4 ">
       <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">NEARBY</h1>
       <hr className="border-gray-300" />
       <button
@@ -130,29 +130,30 @@ const Nearby = () => {
           {nearbyBusStopQuery.error?.message}
         </h3>
       )}
-      {(nearbyBusStopQuery.isSuccess || nearbyBusStopQuery.data) &&
-        (nearbyBusDataEx.length > 0 ? (
-          <div className="space-y-3">
-            {nearbyBusDataEx.map((stop) => (
-              <BusCard
-                key={stop.id || stop.code}
-                id={stop.id}
-                stop={stop}
-                code={stop.code}
-                description1={stop.description1}
-                services={stop.services}
-                distanceKm={stop.distanceKm}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm sm:text-base text-gray-700">
-            No nearby bus stops found
-          </p>
-        ))}
-      <br />
-      <br />
-
+      <div className="rounded-lg bg-[url('/backDrop.png')] bg-cover bg-fixed bg-center">
+        {(nearbyBusStopQuery.isSuccess || nearbyBusStopQuery.data) &&
+          (nearbyBusDataEx.length > 0 ? (
+            <div className="space-y-3">
+              {nearbyBusDataEx.map((stop) => (
+                <BusCard
+                  key={stop.id || stop.code}
+                  id={stop.id}
+                  stop={stop}
+                  code={stop.code}
+                  description1={stop.description1}
+                  services={stop.services}
+                  distanceKm={stop.distanceKm}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm sm:text-base text-gray-700">
+              No nearby bus stops found
+            </p>
+          ))}
+        <br />
+        <br />
+      </div>
       <br />
     </div>
   );

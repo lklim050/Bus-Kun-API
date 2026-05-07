@@ -7,12 +7,12 @@ const OverLay = (props) => {
     <div>
       <div className="fixed inset-0 z-40 bg-black/70">
         <div
-          className="fixed inset-0 bg-white overflow-y-auto p-3 sm:p-4 
+          className="fixed inset-0 bg-slate-200/20 overflow-y-auto p-3 sm:p-4 
                 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 
                 sm:w-[92%] sm:max-w-4xl sm:max-h-[80vh] sm:rounded-xl"
         >
           <div className="flex flex-col sm:flex-row gap-2 mt-3 sm:items-center mb-3">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-white w-51">
               ALERT ALERT!!!
             </h1>
             <button
@@ -26,7 +26,7 @@ const OverLay = (props) => {
           </div>
 
           {props.message && props.message.length > 0 ? (
-            <div className="list-none p-0 m-0 flex flex-wrap gap-3">
+            <div className="list-none p-0 m-0 flex flex-wrap gap-3 ">
               <AlertCard
                 status={props.status}
                 affected={props.affected}

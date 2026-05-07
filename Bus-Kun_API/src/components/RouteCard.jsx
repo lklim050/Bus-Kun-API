@@ -26,7 +26,7 @@ const RouteCard = (props) => {
                 — {item.description}
               </span>
             </p>
-            <div className="text-xs sm:text-sm text-gray-500 mt-1 leading-relaxed">
+            <div className="text-xs sm:text-sm mt-1 leading-relaxed">
               {item.timing ? (
                 <p>
                   {item.timing.weekdaysFirst &&
@@ -47,9 +47,9 @@ const RouteCard = (props) => {
       </div>
     );
   };
-
+  //---------------------------------RETURN------------------------------------------------------
   return (
-    <div className="w-full">
+    <div className="w-full ">
       {/* 1. TAB TOGGLE (Only visible on mobile/tablet, hidden on lg screens) */}
       <div className="flex lg:hidden mb-4 bg-gray-200 p-1 rounded-lg w-full">
         <button
@@ -78,7 +78,7 @@ const RouteCard = (props) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Direction 1 Section */}
         <section
-          className={`bg-white border border-gray-200 rounded-lg p-4 shadow-sm ${
+          className={`bg-slate-200/70 border border-gray-200 rounded-lg p-4 shadow-sm ${
             changeRoute === 0 ? "block" : "hidden lg:block"
           }`}
         >
@@ -87,7 +87,7 @@ const RouteCard = (props) => {
 
         {/* Direction 2 Section */}
         <section
-          className={`bg-white border border-gray-200 rounded-lg p-4 shadow-sm ${
+          className={`bg-slate-200/70 border border-gray-200 rounded-lg p-4 shadow-sm ${
             changeRoute === 1 ? "block" : "hidden lg:block"
           }`}
         >

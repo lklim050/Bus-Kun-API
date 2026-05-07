@@ -32,7 +32,7 @@ const Search = () => {
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
           SEARCH
         </h1>
-        <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 p-3 rounded-lg">
+        <div className="flex items-center gap-2 bg-green-50 border border-blue-100 p-3 rounded-lg">
           <span className="text-blue-600 text-lg">💡</span>
           <p className="my-auto text-sm text-blue-800">
             <span className="font-semibold">Tips:</span> Use capital letters for
@@ -42,7 +42,7 @@ const Search = () => {
       </header>
 
       {/* Search Input Group */}
-      <div className="flex flex-col sm:flex-row gap-2 bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+      <div className="flex flex-col sm:flex-row gap-2 bg-green-50 p-4 rounded-xl shadow-sm border border-gray-200 ">
         <input
           type="text"
           name="busNo"
@@ -79,14 +79,14 @@ const Search = () => {
       {/* Results Section */}
       {routeData.length > 0 && (
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="flex items-center gap-2 border-l-4 border-slate-700 pl-3">
+          <div className="flex items-center gap-2 border-l-4 border-slate-700 pl-3 ">
             <h4 className="text-lg font-bold text-gray-900">
-              Bus Route for Service No{" "}
+              Bus Route for Service No{"   "}
               <span className="text-blue-600">{input}</span>
             </h4>
           </div>
 
-          <div className="w-full overflow-hidden">
+          <div className="w-full overflow-hidden bg-[url('/backDrop.png')] bg-cover bg-fixed bg-center">
             <RouteCard key={input} routeData={routeData} />
           </div>
         </div>

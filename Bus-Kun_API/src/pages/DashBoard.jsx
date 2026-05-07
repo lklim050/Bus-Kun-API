@@ -110,14 +110,14 @@ const DashBoard = () => {
   //------------------------------------RETURN------------------------------------------------
 
   return (
-    <div className="max-w-6xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-4">
+    <div className="max-w-6xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-4 ">
       <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
         DASHBOARD
       </h1>
       <hr className="border-black-500" />
       <div className="flex flex-row gap-4 justify-evenly">
         <button
-          onClick={() => setShowModal(isTest)}
+          onClick={() => setShowModal(true)}
           className="px-4 py-2 rounded-md bg-lime-400 text-white text-sm sm:text-base hover:bg-green-700"
         >
           ADD BUS STOP
@@ -190,42 +190,44 @@ const DashBoard = () => {
           lon=103.84)
         </p>
       )}
-      <hr className="border-gray-300" />
-      <button
-        onClick={() => storedStopQuery.refetch()}
-        className="px-4 py-2 rounded-md bg-slate-700 text-white text-sm sm:text-base hover:bg-slate-800"
-      >
-        Refresh Stored Bus Stop
-      </button>
-      {storedBusStopQuery.isLoading && (
-        <p className="text-sm">Refreshing your favourites</p>
-      )}
-      {/* Stored Bus Stops from Airtable - mapping section */}
-      {storedStopQuery.isLoading && (
-        <h3 className="text-base sm:text-lg font-semibold">
-          Loading your favourites stops...
-        </h3>
-      )}
-      {storedStopQuery.isError && (
-        <h3 className="text-base sm:text-lg font-semibold text-red-600">
-          {storedStopQuery.error?.message}
-        </h3>
-      )}
-      {storedStopData.length > 0 && (
-        <div className="space-y-3">
-          {storedStopData.map((stop) => (
-            <BusCard
-              key={stop.id || stop.code}
-              id={stop.id}
-              stop={stop}
-              code={stop.code}
-              description1={stop.description1}
-              services={stop.services}
-              distanceKm={stop.distanceKm}
-            />
-          ))}
-        </div>
-      )}
+      <hr className="border-gray-300 " />
+      <div className="bg-[url('/backDrop.png')] bg-cover bg-fixed bg-center">
+        <button
+          onClick={() => storedStopQuery.refetch()}
+          className="px-4 py-2 rounded-md bg-slate-700 text-white text-sm sm:text-base hover:bg-slate-800"
+        >
+          Refresh Stored Bus Stop
+        </button>
+        {storedBusStopQuery.isLoading && (
+          <p className="text-sm">Refreshing your favourites</p>
+        )}
+        {/* Stored Bus Stops from Airtable - mapping section */}
+        {storedStopQuery.isLoading && (
+          <h3 className="text-base sm:text-lg font-semibold">
+            Loading your favourites stops...
+          </h3>
+        )}
+        {storedStopQuery.isError && (
+          <h3 className="text-base sm:text-lg font-semibold text-red-600">
+            {storedStopQuery.error?.message}
+          </h3>
+        )}
+        {storedStopData.length > 0 && (
+          <div className="space-y-3">
+            {storedStopData.map((stop) => (
+              <BusCard
+                key={stop.id || stop.code}
+                id={stop.id}
+                stop={stop}
+                code={stop.code}
+                description1={stop.description1}
+                services={stop.services}
+                distanceKm={stop.distanceKm}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

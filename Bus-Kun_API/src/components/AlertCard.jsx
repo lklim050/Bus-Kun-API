@@ -29,7 +29,7 @@ const AlertCard = (props) => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full gap-3 p-0 m-0 list-none">
+    <div className="flex flex-col items-center w-full gap-3 p-0 m-0 list-none bg-blue-200/20">
       {props.affected &&
         props.affected.length > 0 &&
         props.affected.map((item, index) => {
