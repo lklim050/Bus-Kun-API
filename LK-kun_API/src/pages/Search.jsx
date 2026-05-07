@@ -14,14 +14,13 @@ const Search = () => {
   const ltaDataQuery = useQuery({
     queryKey: ["ltadata"],
     queryFn: () => fetchLtaData(input),
-    enabled: false,
+    enabled: !!input, // only enabled if there is input
     retry: 1,
   });
 
   useEffect;
   useEffect(() => {
     setInput(busNoFromUrl);
-    ltaDataQuery.refetch();
   }, [busNoFromUrl]);
 
   const routeData = ltaDataQuery.data ? [...ltaDataQuery.data] : [];

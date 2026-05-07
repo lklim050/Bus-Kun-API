@@ -6,6 +6,7 @@ import DashBoard from "./pages/DashBoard";
 import Nearby from "./pages/Nearby";
 import Search from "./pages/Search";
 import Navbar from "./components/NavBar";
+import WhereAmI from "./pages/WhereAmI";
 
 const queryClient = new QueryClient();
 
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<DashBoard />} />
         <Route path="/nearby" element={<Nearby />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/where" element={<WhereAmI />} />
         <Route path="/test" element={<TestAPI />} />
       </Routes>
       <Navbar />

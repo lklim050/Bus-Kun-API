@@ -1,0 +1,47 @@
+[
+  {
+    "code": "08111",
+    "longitude": 103.84094,
+    "latitude": 1.29987,
+    "description1": "Winsland Hse",
+    "description2": "Penang Rd",
+    "distanceKm": 0.10549142117452431,
+    "services": []
+  },
+  {
+    "code": "08121",
+    "longitude": 103.83878,
+    "latitude": 1.30028,
+    "description1": "Somerset Stn",
+    "description2": "Somerset Rd",
+    "distanceKm": 0.1391507428159148,
+    "services": []
+  },
+  {
+    "code": "08137",
+    "longitude": 103.84101,
+    "latitude": 1.30074,
+    "description1": "Orchard Plaza",
+    "description2": "Orchard Rd",
+    "distanceKm": 0.13920142153748083,
+    "services": []
+  },
+  {
+    "code": "08138",
+    "longitude": 103.84185,
+    "latitude": 1.30048,
+    "description1": "Concorde Hotel S'pore",
+    "description2": "Orchard Rd",
+    "distanceKm": 0.21247071582500818,
+    "services": []
+  },
+  {
+    "code": "09038",
+    "longitude": 103.83852,
+    "latitude": 1.30154,
+    "description1": "Opp Somerset Stn",
+    "description2": "Orchard Rd",
+    "distanceKm": 0.23747006883069735,
+    "services": []
+  }
+]

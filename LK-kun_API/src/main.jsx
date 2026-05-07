@@ -5,6 +5,7 @@ import "./index.css";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorComponent from "./ErrorComponent";
 import { BrowserRouter } from "react-router";
+import "leaflet/dist/leaflet.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
