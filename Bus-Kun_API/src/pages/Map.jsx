@@ -226,7 +226,6 @@ const WhereAmI = () => {
         </p>
       )}
       <br />
-      {JSON.stringify(locationNameQuery.data.display_name)}
       <br />
     </div>
   );

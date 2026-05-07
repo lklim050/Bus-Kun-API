@@ -60,7 +60,7 @@ const Navbar = () => {
         )}
       </NavLink>
       {/*---------------------TEST NEW FEATURE-----------------------------------*/}
-      <NavLink to="/where" className={getLinkClass}>
+      <NavLink to="/map" className={getLinkClass}>
         {({ isActive }) => (
           <>
             <span
