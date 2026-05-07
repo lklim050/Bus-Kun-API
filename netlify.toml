@@ -1,0 +1,20 @@
+# LTA DataMall Proxy
+[[redirects]]
+  from = "/ltaodataservice/*"
+  to = "https://datamall2.mytransport.sg/ltaodataservice/:splat"
+  status = 200
+  force = true
+
+# LTA Maps Proxy
+[[redirects]]
+  from = "/maps/*"
+  to = "https://www.lta.gov.sg/maps/:splat"
+  status = 200
+  force = true
+
+# SPA Fix (Crucial for React/Vite)
+# This prevents 404 errors when you refresh the page on a sub-route
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
