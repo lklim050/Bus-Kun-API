@@ -277,8 +277,10 @@ export const getStoredBusStopData = async (
 };
 // --- FETCH AND PARSE LTA BUS ROUTE XML ---
 export const fetchLtaData = async (busCode) => {
-  const res = await fetch(`/map/busService/bus_route_xml/${busCode}.xml`);
-
+  const res = await fetch(
+    `/map/busService/bus_route_xml/${busCode}.xml?t=${new Date().getTime()}`,
+  );
+  //?t=${new Date().getTime()} to solve netlify cache issue
   if (!res.ok) {
     throw new Error("no data or invalid input");
   }
