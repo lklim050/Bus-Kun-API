@@ -206,8 +206,8 @@ To handle LTA's XML data and avoid CORS issues, this project uses:
 ## 💎 Attributions
 
 - AI Tools: Gemini and Copilot
-  - Assisting in debugging, CORS resolution, error handling, Tailwind CSS styling, Netlify deployment.
-- LTA Data Mall: Providing the bus arrival and train disruption data that powers the core functionality of the app.
+  - Assisting in giving mathematical suggestions, debugging, CORS resolution, error handling, Tailwind CSS styling, Netlify deployment.
+- LTA Data Mall: Providing the bus arrival and train disruption data that are the core functionalities of the app.
 - LTA Bus Routes API: Providing bus route information for both loop and bidirectional bus services.
 - OpenStreetMap Nominatim API: Providing location information based on user coordinates for the map feature.
 - Airtable: Used for managing user data such as favourited bus stops.
