@@ -7,8 +7,8 @@
 
 # LTA Maps Proxy
 [[redirects]]
-  from = "/maps/*"
-  to = "https://www.lta.gov.sg/maps/:splat"
+  from = "/map/*"
+  to = "https://www.lta.gov.sg/map/:splat"
   status = 200
   force = true
   [redirects.headers]
