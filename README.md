@@ -1,6 +1,6 @@
 ![Cover Page](public/title.png)
 
-# PROJECT: BUS-KUN API, your trusted Bus Information App based on LTA
+# PROJECT: 🚌 BUS-KUN API, your trusted Bus Information App based on LTA
 
 ## Introduction
 
@@ -219,4 +219,4 @@ Last but not least I would like to thank my peers and instructor (SEB SGP classr
 
 ## 🗃️ License
 
-MIT. Data is copyrighted by LTA, Leaflet, OpenStreetMap, Nominatim.
+Distributed under [MIT](./LICENSE). Data is copyrighted by LTA, Leaflet, OpenStreetMap, Nominatim.
