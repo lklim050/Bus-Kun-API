@@ -11,6 +11,10 @@
   to = "https://www.lta.gov.sg/maps/:splat"
   status = 200
   force = true
+  [redirects.headers]
+    cache-control = "no-cache, no-store, must-revalidate"
+    pragma = "no-cache"
+    expires = "0"
 
 # SPA Fix (Crucial for React/Vite)
 # This prevents 404 errors when you refresh the page on a sub-route
